@@ -4,7 +4,10 @@ namespace Liborm85\ComposerVendorCleaner;
 
 use Composer\IO\IOInterface;
 use Composer\Util\Filesystem;
+use FilesystemIterator;
 use Liborm85\ComposerVendorCleaner\Finder\Glob;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 class Cleaner
 {
@@ -110,8 +113,10 @@ class Cleaner
     private function getAllFiles($vendorDir)
     {
         $files = [];
-        $directory = new \RecursiveDirectoryIterator($vendorDir, \FilesystemIterator::UNIX_PATHS);
-        $iterator = new \RecursiveIteratorIterator($directory);
+        $directory = new RecursiveDirectoryIterator($vendorDir, FilesystemIterator::UNIX_PATHS);
+        /** @var $iterator RecursiveDirectoryIterator */
+        $iterator = new RecursiveIteratorIterator($directory);
+
         foreach ($iterator as $file) {
             $fileSubPath = $iterator->getSubPathname();
             if ((substr($fileSubPath, -3) === '/..') || ($fileSubPath === '..') || ($fileSubPath === '.')) {
