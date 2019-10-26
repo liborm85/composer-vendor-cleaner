@@ -1,0 +1,28 @@
+{
+    "name": "liborm85/composer-vendor-cleaner",
+    "description": "",
+    "type": "composer-plugin",
+    "keywords": [],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Libor M.",
+            "email": "liborm85@gmail.com"
+        }
+    ],
+    "require": {
+        "composer-plugin-api": "^1.1",
+        "symfony/finder": "^3.3"
+    },
+    "require-dev": {
+        "composer/composer": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Liborm85\\ComposerVendorCleaner\\": "src/"
+        }
+    },
+    "extra": {
+        "class": "Liborm85\\ComposerVendorCleaner\\Plugin"
+    }
+}
