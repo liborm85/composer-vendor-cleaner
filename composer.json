@@ -1,8 +1,18 @@
 {
     "name": "liborm85/composer-vendor-cleaner",
-    "description": "",
+    "description": "Composer Vendor Cleaner removes unnecessary development files and directories from vendor directory.",
     "type": "composer-plugin",
-    "keywords": [],
+    "keywords": [
+        "php",
+        "composer",
+        "composer-plugin",
+        ".gitattributes",
+        "cleaner",
+        "cleanup",
+        "remove",
+        "delete",
+        "ignore"
+    ],
     "license": "MIT",
     "authors": [
         {
