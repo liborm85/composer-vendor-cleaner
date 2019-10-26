@@ -119,7 +119,7 @@ class Cleaner
     {
         $regexPatterns = [];
         foreach ($globPatterns as $globPattern) {
-            $regexPatterns[] = Glob::toRegex($globPattern);
+            $regexPatterns[] = Glob::toRegex($globPattern, false);
         }
 
         return $regexPatterns;
