@@ -31,7 +31,7 @@ class Cleaner
     private function getAllFiles($vendorDir)
     {
         $files = [];
-        $directory = new \RecursiveDirectoryIterator($vendorDir);
+        $directory = new \RecursiveDirectoryIterator($vendorDir, \FilesystemIterator::UNIX_PATHS);
         $iterator = new \RecursiveIteratorIterator($directory);
         foreach ($iterator as $file) {
             $fileSubPath = $iterator->getSubPathname();
