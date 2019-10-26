@@ -6,6 +6,7 @@ use Composer\Composer;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
+use Composer\Script\Event;
 
 class Plugin implements PluginInterface, EventSubscriberInterface
 {
@@ -23,6 +24,13 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        // TODO: Implement getSubscribedEvents() method.
+        return [
+            ScriptEvents::PRE_AUTOLOAD_DUMP => 'cleanup',
+        ];
+    }
+
+    public function cleanup(Event $event)
+    {
+        var_dump('Not implemented '.$event->getName().' callback');
     }
 }
