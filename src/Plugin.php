@@ -67,7 +67,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
         $vendorDir = $this->config->get('vendor-dir');
 
-        $cleaner = new Cleaner($vendorDir);
+        $cleaner = new Cleaner($this->io, $this->filesystem, $vendorDir);
         $cleaner->cleanup($devFiles);
 
         var_dump('Not implemented ' . $event->getName() . ' callback');
