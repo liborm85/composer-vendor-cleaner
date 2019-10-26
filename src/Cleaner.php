@@ -43,6 +43,9 @@ class Cleaner
      */
     public function cleanup($devFiles)
     {
+        $this->io->write("");
+        $this->io->write("Composer vendor cleaner: <info>Cleaning vendor directory</info>");
+
         $allFiles = $this->getAllFiles($this->vendorDir);
 
         $globPatterns = $this->buildGlobPatternFromDevFiles($devFiles);
@@ -65,10 +68,19 @@ class Cleaner
 
         krsort($filesToRemove);
 
+        $this->removeFiles($filesToRemove);
+    }
+
+    /**
+     * @param array $filesToRemove
+     */
+    private function removeFiles($filesToRemove)
+    {
+        $removedDirectories = 0;
+        $removedFiles = 0;
         foreach ($filesToRemove as $fileToRemove) {
             $filepath = $this->vendorDir . $fileToRemove;
             if (is_dir($filepath)) {
-                $iterator = new RecursiveDirectoryIterator($filepath, FilesystemIterator::SKIP_DOTS);
                 if (!$this->isEmptyDirectory($filepath)) {
                     $this->io->write(
                         "Composer vendor cleaner: Directory '<info>{$fileToRemove}</info>' not removed, because isn't empty",
@@ -78,16 +90,18 @@ class Cleaner
                     continue;
                 }
 
-                //$this->filesystem->removeDirectory($filepath);
+                $this->filesystem->removeDirectory($filepath);
 
                 $this->io->write(
                     "Composer vendor cleaner: Directory '<info>{$fileToRemove}</info>' removed",
                     true,
                     IOInterface::VERBOSE
                 );
+                $removedDirectories++;
             } else {
-                //$this->filesystem->remove($filepath);
+                $this->filesystem->remove($filepath);
 
+                $removedFiles++;
                 $this->io->write(
                     "Composer vendor cleaner: File '<info>{$fileToRemove}</info>' removed",
                     true,
@@ -95,6 +109,10 @@ class Cleaner
                 );
             }
         }
+
+        $this->io->write(
+            "Composer vendor cleaner: <info>Removed {$removedFiles} files and {$removedDirectories} directories</info>"
+        );
     }
 
     private function globPatternsToRegexPatterns($globPatterns)

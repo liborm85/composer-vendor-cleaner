@@ -69,8 +69,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
         $cleaner = new Cleaner($this->io, $this->filesystem, $vendorDir);
         $cleaner->cleanup($devFiles);
-
-        var_dump('Not implemented ' . $event->getName() . ' callback');
     }
 
 }
