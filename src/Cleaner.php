@@ -4,7 +4,7 @@ namespace Liborm85\ComposerVendorCleaner;
 
 use Composer\IO\IOInterface;
 use Composer\Util\Filesystem;
-use Symfony\Component\Finder\Glob;
+use Liborm85\ComposerVendorCleaner\Finder\Glob;
 
 class Cleaner
 {
