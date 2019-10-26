@@ -40,15 +40,30 @@ class Cleaner
      */
     public function cleanup($devFiles)
     {
-        $files = $this->getAllFiles($this->vendorDir);
+        $allFiles = $this->getAllFiles($this->vendorDir);
+        var_dump($allFiles);
 
         $globPatterns = $this->buildGlobPatternFromDevFiles($devFiles);
         foreach ($globPatterns as $globPattern) {
-            $this->io->write("Found pattern '{$globPattern}'", true, IOInterface::VERBOSE);
+            $this->io->write(
+                "Found pattern '<info>{$globPattern}</info>' for remove development files",
+                true,
+                IOInterface::VERBOSE
+            );
         }
 
         $regexPatterns = $this->globPatternsToRegexPatterns($globPatterns);
-        var_dump($regexPatterns);
+
+        $filesToRemove = [];
+        foreach ($regexPatterns as $regexPattern) {
+            $filesToRemove += preg_grep($regexPattern, $allFiles);
+        }
+
+        $filesToRemove = array_unique($filesToRemove);
+
+        ksort($filesToRemove);
+
+        var_dump($filesToRemove);
     }
 
     private function globPatternsToRegexPatterns($globPatterns)
@@ -72,11 +87,16 @@ class Cleaner
             $directoryPattern = rtrim($devFileDirectory, '/');
             foreach ($devFileDirectoryFiles as $devFile) {
                 $filePatternPrefix = '';
+                $filePatternSuffix = '';
                 if (substr($devFile, 0, 1) !== '/') {
                     $filePatternPrefix = '/**/';
                 }
 
-                $globPatterns[] = $directoryPattern . $filePatternPrefix . $devFile;
+                if (substr($devFile, -1) === '/') {
+                    $filePatternSuffix = '**';
+                }
+
+                $globPatterns[] = $directoryPattern . $filePatternPrefix . $devFile . $filePatternSuffix;
             }
         }
 
