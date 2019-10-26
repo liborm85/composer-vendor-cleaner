@@ -44,12 +44,11 @@ class Cleaner
     public function cleanup($devFiles)
     {
         $allFiles = $this->getAllFiles($this->vendorDir);
-        var_dump($allFiles);
 
         $globPatterns = $this->buildGlobPatternFromDevFiles($devFiles);
         foreach ($globPatterns as $globPattern) {
             $this->io->write(
-                "Found pattern '<info>{$globPattern}</info>' for remove development files",
+                "Composer vendor cleaner: Found pattern '<info>{$globPattern}</info>' for remove development files",
                 true,
                 IOInterface::VERBOSE
             );
@@ -64,9 +63,38 @@ class Cleaner
 
         $filesToRemove = array_unique($filesToRemove);
 
-        ksort($filesToRemove);
+        krsort($filesToRemove);
 
-        var_dump($filesToRemove);
+        foreach ($filesToRemove as $fileToRemove) {
+            $filepath = $this->vendorDir . $fileToRemove;
+            if (is_dir($filepath)) {
+                $iterator = new RecursiveDirectoryIterator($filepath, FilesystemIterator::SKIP_DOTS);
+                if (!$this->isEmptyDirectory($filepath)) {
+                    $this->io->write(
+                        "Composer vendor cleaner: Directory '<info>{$fileToRemove}</info>' not removed, because isn't empty",
+                        true,
+                        IOInterface::VERBOSE
+                    );
+                    continue;
+                }
+
+                //$this->filesystem->removeDirectory($filepath);
+
+                $this->io->write(
+                    "Composer vendor cleaner: Directory '<info>{$fileToRemove}</info>' removed",
+                    true,
+                    IOInterface::VERBOSE
+                );
+            } else {
+                //$this->filesystem->remove($filepath);
+
+                $this->io->write(
+                    "Composer vendor cleaner: File '<info>{$fileToRemove}</info>' removed",
+                    true,
+                    IOInterface::VERBOSE
+                );
+            }
+        }
     }
 
     private function globPatternsToRegexPatterns($globPatterns)
@@ -129,5 +157,12 @@ class Cleaner
         }
 
         return $files;
+    }
+
+    private function isEmptyDirectory($directory)
+    {
+        $iterator = new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS);
+
+        return iterator_count($iterator) === 0;
     }
 }
