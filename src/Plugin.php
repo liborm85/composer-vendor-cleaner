@@ -1,6 +1,6 @@
 <?php
 
-namespace Liborm85\ComposerCleaner;
+namespace Liborm85\ComposerVendorCleaner;
 
 use Composer\Composer;
 use Composer\EventDispatcher\EventSubscriberInterface;
