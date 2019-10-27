@@ -20,6 +20,10 @@
             "email": "liborm85@gmail.com"
         }
     ],
+    "support": {
+        "issues": "https://github.com/liborm85/composer-vendor-cleaner/issues",
+        "source": "https://github.com/liborm85/composer-vendor-cleaner"
+    },
     "require": {
         "composer-plugin-api": "^1.1"
     },
@@ -30,6 +34,12 @@
         "psr-4": {
             "Liborm85\\ComposerVendorCleaner\\": "src/"
         }
+    },
+    "archive": {
+        "exclude": [
+            ".editorconfig",
+            ".gitignore"
+        ]
     },
     "extra": {
         "class": "Liborm85\\ComposerVendorCleaner\\Plugin"
