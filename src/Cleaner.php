@@ -145,7 +145,9 @@ class Cleaner
                     $filePatternSuffix = '**';
                 }
 
-                $globPatterns[] = $directoryPattern . $filePatternPrefix . $devFile . $filePatternSuffix;
+                $globPattern = '/' . ltrim($directoryPattern . $filePatternPrefix . $devFile . $filePatternSuffix, '/');
+
+                $globPatterns[] = $globPattern;
             }
         }
 
