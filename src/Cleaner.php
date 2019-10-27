@@ -53,7 +53,7 @@ class Cleaner
             $this->io->write(
                 "Composer vendor cleaner: Found pattern '<info>{$globPattern}</info>' for remove development files",
                 true,
-                IOInterface::VERBOSE
+                IOInterface::DEBUG
             );
         }
 

@@ -18,7 +18,7 @@ composer global require liborm85/composer-vendor-cleaner
 
 Develompent files and directories to remove can be defined in `composer.json` file
 in [`extra`](https://getcomposer.org/doc/04-schema.md#extra) data attribute per new key `dev-files`.
-Glob syntax is fully supported.
+Glob pattern syntax is fully supported.
 
 Example:
 ```
