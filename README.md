@@ -43,6 +43,19 @@ Example:
 }
 ```
 
+## Why a new plugin?
+
+Some composer packages contain files and directories that do not belong to production servers, but composer
+does not solve this.
+
+Exists a lot of plugins for composer trying to solve this issue, they don't have advanced patterns to filtering
+or they are not user definable. Or some have no configuration and it works automatically and delete almost everything
+and then the package does not work.
+
+That's why I created a new one that allows advanced filtering by glob patterns.
+
+If you miss a feature or find bug, please, create an [issue](https://github.com/liborm85/composer-vendor-cleaner/issues).
+
 ## License
 
 MIT
