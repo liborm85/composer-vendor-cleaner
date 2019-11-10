@@ -21,21 +21,29 @@ class Cleaner
      * @var Filesystem
      */
     private $filesystem;
+
     /**
      * @var string
      */
     private $vendorDir;
 
     /**
+     * @var bool
+     */
+    private $matchCase;
+
+    /**
      * @param IOInterface $io
      * @param Filesystem $filesystem
      * @param string $vendorDir
+     * @param bool $matchCase
      */
-    public function __construct($io, $filesystem, $vendorDir)
+    public function __construct($io, $filesystem, $vendorDir, $matchCase)
     {
         $this->io = $io;
         $this->filesystem = $filesystem;
         $this->vendorDir = $vendorDir;
+        $this->matchCase = $matchCase;
     }
 
     /**
@@ -57,7 +65,7 @@ class Cleaner
             );
         }
 
-        $regexPatterns = $this->globPatternsToRegexPatterns($globPatterns);
+        $regexPatterns = $this->globPatternsToRegexPatterns($globPatterns, $this->matchCase);
 
         $filesToRemove = [];
         foreach ($regexPatterns as $regexPattern) {
@@ -115,11 +123,21 @@ class Cleaner
         );
     }
 
-    private function globPatternsToRegexPatterns($globPatterns)
+    /**
+     * @param array $globPatterns
+     * @param bool $matchCase
+     * @return array
+     */
+    private function globPatternsToRegexPatterns($globPatterns, $matchCase)
     {
         $regexPatterns = [];
         foreach ($globPatterns as $globPattern) {
-            $regexPatterns[] = Glob::toRegex($globPattern, false);
+            $regexPattern = Glob::toRegex($globPattern, false);
+            if (!$matchCase) {
+                $regexPattern .= 'i';
+            }
+
+            $regexPatterns[] = $regexPattern;
         }
 
         return $regexPatterns;

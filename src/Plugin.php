@@ -65,9 +65,12 @@ class Plugin implements PluginInterface, EventSubscriberInterface
             return;
         }
 
+        $pluginConfig = $this->config->get(self::EXTRA_KEY);
+        $matchCase = isset($pluginConfig['match-case']) ? (bool)$pluginConfig['match-case'] : true;
+
         $vendorDir = $this->config->get('vendor-dir');
 
-        $cleaner = new Cleaner($this->io, $this->filesystem, $vendorDir);
+        $cleaner = new Cleaner($this->io, $this->filesystem, $vendorDir, $matchCase);
         $cleaner->cleanup($devFiles);
     }
 

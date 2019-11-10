@@ -43,6 +43,19 @@ Example:
 }
 ```
 
+For additional configuration can be used [`config`](https://getcomposer.org/doc/04-schema.md#config) attribute.
+
+- `match-case` _(default: true)_ - Match case of name files and directories.
+
+Example:
+```
+"config": {
+    "dev-files": {
+        "match-case": false
+    }
+}
+```
+
 ## Why a new plugin?
 
 Some composer packages contain files and directories that do not belong to production servers, but composer
