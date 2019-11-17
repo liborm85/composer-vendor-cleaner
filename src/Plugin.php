@@ -36,12 +36,19 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     private $filesystem;
 
     /**
+     * @var bool
+     */
+    private $isCleaned = false;
+
+    /**
      * @inheritDoc
      */
     public static function getSubscribedEvents()
     {
         return [
             ScriptEvents::PRE_AUTOLOAD_DUMP => 'cleanup',
+            ScriptEvents::POST_UPDATE_CMD => 'cleanup',
+            ScriptEvents::POST_INSTALL_CMD => 'cleanup',
         ];
     }
 
@@ -58,6 +65,12 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
     public function cleanup(Event $event)
     {
+        if ($this->isCleaned) { // fire event only once
+            return;
+        }
+
+        $this->isCleaned = true;
+
         $package = $this->composer->getPackage();
         $extra = $package->getExtra();
         $devFiles = isset($extra[self::EXTRA_KEY]) ? $extra[self::EXTRA_KEY] : null;
