@@ -6,6 +6,7 @@ use Liborm85\ComposerVendorCleaner\GlobFilter;
 
 class GlobFilterTest extends TestCase
 {
+
     private $simpleEntriesArray = [
         'test.php',
         'Test.php',

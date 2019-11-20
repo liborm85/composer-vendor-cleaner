@@ -6,7 +6,6 @@ use Composer\IO\IOInterface;
 use Composer\Util\Filesystem;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 
 class Cleaner
 {
@@ -53,7 +52,8 @@ class Cleaner
         $this->io->write("");
         $this->io->write("Composer vendor cleaner: <info>Cleaning vendor directory</info>");
 
-        $allFiles = $this->getAllFiles($this->vendorDir);
+        $entries = new DirectoryEntries($this->vendorDir);
+        $allFiles = $entries->getEntries();
 
         $globPatterns = $this->buildGlobPatternFromDevFiles($devFiles);
         foreach ($globPatterns as $globPattern) {
@@ -147,31 +147,6 @@ class Cleaner
         }
 
         return $globPatterns;
-    }
-
-    /**
-     * @param string $vendorDir
-     * @return array
-     */
-    private function getAllFiles($vendorDir)
-    {
-        $files = [];
-        $directory = new RecursiveDirectoryIterator($vendorDir, FilesystemIterator::UNIX_PATHS);
-        /** @var $iterator RecursiveDirectoryIterator */
-        $iterator = new RecursiveIteratorIterator($directory);
-
-        foreach ($iterator as $file) {
-            $fileSubPath = $iterator->getSubPathname();
-            if ((substr($fileSubPath, -3) === '/..') || ($fileSubPath === '..') || ($fileSubPath === '.')) {
-                continue;
-            } elseif (substr($fileSubPath, -2) === '/.') {
-                $fileSubPath = rtrim($fileSubPath, '.');
-            }
-
-            $files[] = '/' . $fileSubPath;
-        }
-
-        return $files;
     }
 
     /**
