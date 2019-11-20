@@ -197,6 +197,10 @@ class Cleaner
         return $files;
     }
 
+    /**
+     * @param string $directory
+     * @return bool
+     */
     private function isEmptyDirectory($directory)
     {
         $iterator = new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS);
