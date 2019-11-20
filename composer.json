@@ -28,17 +28,28 @@
         "composer-plugin-api": "^1.1"
     },
     "require-dev": {
-        "composer/composer": "^1.1"
+        "composer/composer": "^1.1",
+        "phpunit/phpunit": "^6.5"
+    },
+    "scripts": {
+        "test": "phpunit"
     },
     "autoload": {
         "psr-4": {
             "Liborm85\\ComposerVendorCleaner\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Liborm85\\ComposerVendorCleaner\\Tests\\": "tests/"
+        }
+    },
     "archive": {
         "exclude": [
             ".editorconfig",
-            ".gitignore"
+            ".gitignore",
+            "phpunit.xml",
+            "tests"
         ]
     },
     "extra": {
