@@ -35,6 +35,12 @@ class GlobFilter
         $this->excludeRegex[] = $this->globPatternToRegexPattern($globPattern, $matchCase);
     }
 
+    public function clear()
+    {
+        $this->includeRegex = [];
+        $this->excludeRegex = [];
+    }
+
     /**
      * @param array $entries
      * @return array
