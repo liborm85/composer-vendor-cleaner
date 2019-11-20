@@ -5,7 +5,6 @@ namespace Liborm85\ComposerVendorCleaner;
 use Composer\IO\IOInterface;
 use Composer\Util\Filesystem;
 use FilesystemIterator;
-use Liborm85\ComposerVendorCleaner\Finder\Glob;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -65,14 +64,12 @@ class Cleaner
             );
         }
 
-        $regexPatterns = $this->globPatternsToRegexPatterns($globPatterns, $this->matchCase);
-
-        $filesToRemove = [];
-        foreach ($regexPatterns as $regexPattern) {
-            $filesToRemove += preg_grep($regexPattern, $allFiles);
+        $globFilter = new GlobFilter();
+        foreach ($globPatterns as $globPattern) {
+            $globFilter->addInclude($globPattern, $this->matchCase);
         }
 
-        $filesToRemove = array_unique($filesToRemove);
+        $filesToRemove = $globFilter->getFilteredEntries($allFiles);
 
         krsort($filesToRemove);
 
@@ -121,26 +118,6 @@ class Cleaner
         $this->io->write(
             "Composer vendor cleaner: <info>Removed {$removedFiles} files and {$removedDirectories} directories</info>"
         );
-    }
-
-    /**
-     * @param array $globPatterns
-     * @param bool $matchCase
-     * @return array
-     */
-    private function globPatternsToRegexPatterns($globPatterns, $matchCase)
-    {
-        $regexPatterns = [];
-        foreach ($globPatterns as $globPattern) {
-            $regexPattern = Glob::toRegex($globPattern, false);
-            if (!$matchCase) {
-                $regexPattern .= 'i';
-            }
-
-            $regexPatterns[] = $regexPattern;
-        }
-
-        return $regexPatterns;
     }
 
     /**
