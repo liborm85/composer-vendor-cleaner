@@ -48,6 +48,7 @@
         "exclude": [
             ".editorconfig",
             ".gitignore",
+            ".travis.yml",
             "phpunit.xml",
             "tests"
         ]
