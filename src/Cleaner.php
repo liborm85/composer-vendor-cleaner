@@ -52,8 +52,9 @@ class Cleaner
         $this->io->write("");
         $this->io->write("Composer vendor cleaner: <info>Cleaning vendor directory</info>");
 
-        $entries = new DirectoryEntries($this->vendorDir);
-        $allFiles = $entries->getEntries();
+        $directory = new Directory();
+        $directory->addPath($this->vendorDir);
+        $allFiles = $directory->getEntries();
 
         $globPatterns = $this->buildGlobPatternFromDevFiles($devFiles);
         foreach ($globPatterns as $globPattern) {
