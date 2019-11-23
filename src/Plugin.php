@@ -13,7 +13,7 @@ use Composer\Util\Filesystem;
 
 class Plugin implements PluginInterface, EventSubscriberInterface
 {
-    const EXTRA_KEY = 'dev-files';
+    const DEV_FILES_KEY = 'dev-files';
 
     /**
      * @var Composer
@@ -73,12 +73,12 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
         $package = $this->composer->getPackage();
         $extra = $package->getExtra();
-        $devFiles = isset($extra[self::EXTRA_KEY]) ? $extra[self::EXTRA_KEY] : null;
+        $devFiles = isset($extra[self::DEV_FILES_KEY]) ? $extra[self::DEV_FILES_KEY] : null;
         if (!$devFiles) {
             return;
         }
 
-        $pluginConfig = $this->config->get(self::EXTRA_KEY);
+        $pluginConfig = $this->config->get(self::DEV_FILES_KEY);
         $matchCase = isset($pluginConfig['match-case']) ? (bool)$pluginConfig['match-case'] : true;
 
         $vendorDir = $this->config->get('vendor-dir');
