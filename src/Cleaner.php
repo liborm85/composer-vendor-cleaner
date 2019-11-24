@@ -26,6 +26,11 @@ class Cleaner
     private $vendorDir;
 
     /**
+     * @var Package[]
+     */
+    private $packages;
+
+    /**
      * @var bool
      */
     private $matchCase;
@@ -34,13 +39,15 @@ class Cleaner
      * @param IOInterface $io
      * @param Filesystem $filesystem
      * @param string $vendorDir
+     * @param Package[] $packages
      * @param bool $matchCase
      */
-    public function __construct($io, $filesystem, $vendorDir, $matchCase)
+    public function __construct($io, $filesystem, $vendorDir, $packages, $matchCase)
     {
         $this->io = $io;
         $this->filesystem = $filesystem;
         $this->vendorDir = $vendorDir;
+        $this->packages = $packages;
         $this->matchCase = $matchCase;
     }
 

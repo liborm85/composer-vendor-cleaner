@@ -4,7 +4,11 @@ namespace Liborm85\ComposerVendorCleaner;
 
 use Composer\Composer;
 use Composer\Config;
+use Composer\DependencyResolver\Operation\InstallOperation;
+use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\EventDispatcher\EventSubscriberInterface;
+use Composer\Installer\PackageEvent;
+use Composer\Installer\PackageEvents;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
@@ -41,6 +45,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     private $isCleaned = false;
 
     /**
+     * @var array
+     */
+    private $changedPackagesId = [];
+
+    /**
      * @inheritDoc
      */
     public static function getSubscribedEvents()
@@ -49,6 +58,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface
             ScriptEvents::PRE_AUTOLOAD_DUMP => 'cleanup',
             ScriptEvents::POST_UPDATE_CMD => 'cleanup',
             ScriptEvents::POST_INSTALL_CMD => 'cleanup',
+            PackageEvents::POST_PACKAGE_INSTALL => 'addPackage',
+            PackageEvents::POST_PACKAGE_UPDATE => 'addPackage',
         ];
     }
 
@@ -61,6 +72,13 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $this->io = $io;
         $this->config = $composer->getConfig();
         $this->filesystem = new Filesystem();
+    }
+
+    public function addPackage(PackageEvent $event)
+    {
+        /** @var InstallOperation|UpdateOperation $operation */
+        $operation = $event->getOperation();
+        $this->changedPackagesId = $operation->getPackage()->getId();
     }
 
     public function cleanup(Event $event)
@@ -83,8 +101,30 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
         $vendorDir = $this->config->get('vendor-dir');
 
-        $cleaner = new Cleaner($this->io, $this->filesystem, $vendorDir, $matchCase);
+        $packages = $this->getPackages();
+
+        $cleaner = new Cleaner($this->io, $this->filesystem, $vendorDir, $packages, $matchCase);
         $cleaner->cleanup($devFiles);
+    }
+
+    /**
+     * @return Package[]
+     */
+    private function getPackages()
+    {
+        $packages = [];
+        $localRepository = $this->composer->getRepositoryManager()->getLocalRepository();
+        $installationManager = $this->composer->getInstallationManager();
+        foreach ($localRepository->getPackages() as $repositoryPackage) {
+            $package = new Package(
+                $repositoryPackage,
+                $installationManager,
+                in_array($repositoryPackage->getId(), $this->changedPackagesId)
+            );
+            $packages[] = $package;
+        }
+
+        return $packages;
     }
 
 }
