@@ -36,6 +36,16 @@ class Cleaner
     private $matchCase;
 
     /**
+     * @var int
+     */
+    private $removedDirectories = 0;
+
+    /**
+     * @var int
+     */
+    private $removedFiles = 0;
+
+    /**
      * @param IOInterface $io
      * @param Filesystem $filesystem
      * @param string $vendorDir
@@ -59,44 +69,50 @@ class Cleaner
         $this->io->write("");
         $this->io->write("Composer vendor cleaner: <info>Cleaning vendor directory</info>");
 
-        $directory = new Directory();
-        $directory->addPath($this->vendorDir);
-        $allFiles = $directory->getEntries();
+        foreach ($this->packages as $package) {
+            $devFilesForPackage = $this->findGlobPatternsForPackage($package->getPrettyName(), $devFiles);
+            if (empty($devFilesForPackage)) {
+                continue;
+            }
 
-        $globPatterns = $this->buildGlobPatternFromDevFiles($devFiles);
-        foreach ($globPatterns as $globPattern) {
-            $this->io->write(
-                "Composer vendor cleaner: Found pattern '<info>{$globPattern}</info>' for remove development files",
-                true,
-                IOInterface::DEBUG
-            );
+            $directory = new Directory();
+            $directory->addPath($package->getInstallPath());
+            $allFiles = $directory->getEntries();
+
+            $globPatterns = $this->buildGlobPatternForFilter($devFilesForPackage);
+
+            $globFilter = new GlobFilter();
+            foreach ($globPatterns as $globPattern) {
+                $globFilter->addInclude($globPattern, $this->matchCase);
+            }
+
+            $filesToRemove = $globFilter->getFilteredEntries($allFiles);
+
+            krsort($filesToRemove);
+
+            $this->removeFiles($package->getPrettyName(), $package->getInstallPath(), $filesToRemove);
         }
 
-        $globFilter = new GlobFilter();
-        foreach ($globPatterns as $globPattern) {
-            $globFilter->addInclude($globPattern, $this->matchCase);
-        }
-
-        $filesToRemove = $globFilter->getFilteredEntries($allFiles);
-
-        krsort($filesToRemove);
-
-        $this->removeFiles($filesToRemove);
+        $this->io->write(
+            "Composer vendor cleaner: <info>Removed {$this->removedFiles} files and {$this->removedDirectories} directories</info>"
+        );
     }
 
     /**
+     * @param string $packageName
+     * @param string $rootDir
      * @param array $filesToRemove
      */
-    private function removeFiles($filesToRemove)
+    private function removeFiles($packageName, $rootDir, $filesToRemove)
     {
         $removedDirectories = 0;
         $removedFiles = 0;
         foreach ($filesToRemove as $fileToRemove) {
-            $filepath = $this->vendorDir . $fileToRemove;
+            $filepath = $rootDir . $fileToRemove;
             if (is_dir($filepath)) {
                 if (!$this->isEmptyDirectory($filepath)) {
                     $this->io->write(
-                        "Composer vendor cleaner: Directory '<info>{$fileToRemove}</info>' not removed, because isn't empty",
+                        "Composer vendor cleaner: Directory '<info>{$fileToRemove}</info>' from package <info>{$packageName}</info> not removed, because isn't empty",
                         true,
                         IOInterface::VERBOSE
                     );
@@ -106,52 +122,74 @@ class Cleaner
                 $this->filesystem->removeDirectory($filepath);
 
                 $this->io->write(
-                    "Composer vendor cleaner: Directory '<info>{$fileToRemove}</info>' removed",
+                    "Composer vendor cleaner: Directory '<info>{$fileToRemove}</info>' from package <info>{$packageName}</info> removed",
                     true,
                     IOInterface::VERBOSE
                 );
-                $removedDirectories++;
+                $this->removedDirectories++;
             } else {
                 $this->filesystem->remove($filepath);
 
-                $removedFiles++;
+                $this->removedFiles++;
                 $this->io->write(
-                    "Composer vendor cleaner: File '<info>{$fileToRemove}</info>' removed",
+                    "Composer vendor cleaner: File '<info>{$fileToRemove}</info>' from package <info>{$packageName}</info> removed",
                     true,
                     IOInterface::VERBOSE
                 );
             }
         }
 
-        $this->io->write(
-            "Composer vendor cleaner: <info>Removed {$removedFiles} files and {$removedDirectories} directories</info>"
-        );
     }
 
     /**
+     * @param string $packageName
      * @param array $devFiles
      * @return array
      */
-    private function buildGlobPatternFromDevFiles($devFiles)
+    private function findGlobPatternsForPackage($packageName, $devFiles)
     {
         $globPatterns = [];
-        foreach ($devFiles as $devFileDirectory => $devFileDirectoryFiles) {
-            $directoryPattern = rtrim($devFileDirectory, '/');
-            foreach ($devFileDirectoryFiles as $devFile) {
-                $filePatternPrefix = '';
-                $filePatternSuffix = '';
-                if (substr($devFile, 0, 1) !== '/') {
-                    $filePatternPrefix = '/**/';
-                }
 
-                if (substr($devFile, -1) === '/') {
-                    $filePatternSuffix = '**';
-                }
-
-                $globPattern = '/' . ltrim($directoryPattern . $filePatternPrefix . $devFile . $filePatternSuffix, '/');
-
-                $globPatterns[] = $globPattern;
+        $globFilter = new GlobFilter();
+        foreach ($devFiles as $packageGlob => $devFile) {
+            $packageGlobPattern = rtrim($packageGlob, '/');
+            if ($packageGlobPattern === '') {
+                $packageGlobPattern = '*/*';
+            } elseif (strpos($packageGlobPattern, '/') === false) {
+                $packageGlobPattern = '/*';
             }
+
+            $globFilter->clear();
+            $globFilter->addInclude($packageGlobPattern, $this->matchCase);
+            if (!empty($globFilter->getFilteredEntries([$packageName]))) {
+                $globPatterns += $devFile;
+            }
+        }
+
+        return $globPatterns;
+    }
+
+    /**
+     * @param array $patterns
+     * @return array
+     */
+    private function buildGlobPatternForFilter($patterns)
+    {
+        $globPatterns = [];
+        foreach ($patterns as $pattern) {
+            $filePatternPrefix = '';
+            $filePatternSuffix = '';
+            if (substr($pattern, 0, 1) !== '/') {
+                $filePatternPrefix = '/**/';
+            }
+
+            if (substr($pattern, -1) === '/') {
+                $filePatternSuffix = '**';
+            }
+
+            $globPattern = '/' . ltrim($filePatternPrefix . $pattern . $filePatternSuffix, '/');
+
+            $globPatterns[] = $globPattern;
         }
 
         return $globPatterns;
