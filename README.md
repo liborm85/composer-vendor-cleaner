@@ -9,7 +9,7 @@ Local installation to project:
 composer require liborm85/composer-vendor-cleaner
 ```
 
-Global instlallation:
+Global installation:
 ```
 composer global require liborm85/composer-vendor-cleaner
 ```
