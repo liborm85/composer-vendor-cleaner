@@ -13,7 +13,3 @@ install:
 
 script:
     - composer test
-
-jobs:
-    allow_failures:
-        - php: 7.4
