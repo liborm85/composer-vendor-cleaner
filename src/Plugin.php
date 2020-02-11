@@ -78,7 +78,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     {
         /** @var InstallOperation|UpdateOperation $operation */
         $operation = $event->getOperation();
-        $this->changedPackagesId = $operation->getPackage()->getId();
+        $this->changedPackagesId[] = $operation->getPackage()->getId();
     }
 
     public function cleanup(Event $event)
