@@ -47,7 +47,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     /**
      * @var array
      */
-    private $changedPackagesId = [];
+    private $changedPackages = [];
 
     /**
      * @inheritDoc
@@ -78,7 +78,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     {
         /** @var InstallOperation|UpdateOperation $operation */
         $operation = $event->getOperation();
-        $this->changedPackagesId[] = $operation->getPackage()->getId();
+        $this->changedPackages[] = $operation->getPackage()->getPrettyName();
     }
 
     public function cleanup(Event $event)
@@ -119,7 +119,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
             $package = new Package(
                 $repositoryPackage,
                 $installationManager,
-                in_array($repositoryPackage->getId(), $this->changedPackagesId)
+                in_array($repositoryPackage->getPrettyName(), $this->changedPackages)
             );
             $packages[] = $package;
         }
