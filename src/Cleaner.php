@@ -93,8 +93,10 @@ class Cleaner
             $this->removeFiles($package->getPrettyName(), $package->getInstallPath(), $filesToRemove);
         }
 
+        $packagesCount = count($this->packages);
+
         $this->io->write(
-            "Composer vendor cleaner: <info>Removed {$this->removedFiles} files and {$this->removedDirectories} directories</info>"
+            "Composer vendor cleaner: <info>Removed {$this->removedFiles} files and {$this->removedDirectories} directories from {$packagesCount} packages.</info>"
         );
     }
 
