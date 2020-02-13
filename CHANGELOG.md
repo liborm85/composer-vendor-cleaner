@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- refactored packages processing and cleaning
+- fixed sorting directories for remove (only some versions of PHP)
+
 ## 1.1.0 - 2019-11-20
 
 - new `match-case` setting
