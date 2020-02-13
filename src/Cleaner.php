@@ -88,7 +88,7 @@ class Cleaner
 
             $filesToRemove = $globFilter->getFilteredEntries($allFiles);
 
-            krsort($filesToRemove);
+            rsort($filesToRemove);
 
             $this->removeFiles($package->getPrettyName(), $package->getInstallPath(), $filesToRemove);
         }
