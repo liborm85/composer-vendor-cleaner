@@ -99,7 +99,7 @@ class Cleaner
         $packagesCount = count($this->packages);
 
         $this->io->write(
-            "Composer vendor cleaner: <info>Removed {$this->removedFiles} files and {$this->removedDirectories} directories from {$packagesCount} packages.</info>"
+            "Composer vendor cleaner: <info>Removed {$this->removedFiles} files and {$this->removedDirectories} directories from {$packagesCount} packages</info>"
         );
     }
 
