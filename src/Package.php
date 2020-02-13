@@ -4,7 +4,6 @@ namespace Liborm85\ComposerVendorCleaner;
 
 use Composer\Installer\InstallationManager;
 use Composer\Package\PackageInterface;
-use Composer\Repository\InstalledArrayRepository;
 
 class Package
 {
