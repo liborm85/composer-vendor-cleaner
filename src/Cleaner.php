@@ -66,6 +66,9 @@ class Cleaner
      */
     public function cleanup($devFiles)
     {
+        $this->removedDirectories = 0;
+        $this->removedFiles = 0;
+
         $this->io->write("");
         $this->io->write("Composer vendor cleaner: <info>Cleaning vendor directory</info>");
 
@@ -107,8 +110,6 @@ class Cleaner
      */
     private function removeFiles($packageName, $rootDir, $filesToRemove)
     {
-        $removedDirectories = 0;
-        $removedFiles = 0;
         foreach ($filesToRemove as $fileToRemove) {
             $filepath = $rootDir . $fileToRemove;
             if (is_dir($filepath)) {
