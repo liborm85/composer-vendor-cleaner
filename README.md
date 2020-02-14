@@ -24,7 +24,7 @@ Example:
 ```
 "extra": {
     "dev-files": {
-        "/": [                  // means: find in all library packages directories
+        "/": [                  // shortcut for "*/*", means: find in all library packages directories
             "tests/",           // means: tests directory whatever
             "docs/",
             ".travis.yml"       // means: .travis.yml file whatever
