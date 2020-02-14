@@ -165,7 +165,7 @@ class Cleaner
             $globFilter->clear();
             $globFilter->addInclude($packageGlobPattern, $this->matchCase);
             if (!empty($globFilter->getFilteredEntries([$packageName]))) {
-                $globPatterns += $devFile;
+                $globPatterns = array_merge($globPatterns, $devFile);
             }
         }
 
