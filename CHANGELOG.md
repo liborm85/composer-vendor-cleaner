@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fixed merging multiple patters for cleaning
 
 ## 1.1.1 - 2020-02-14
 
