@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.1 - 2020-02-14
 
 - refactored packages processing and cleaning
 - fixed sorting directories for remove (only some versions of PHP)
