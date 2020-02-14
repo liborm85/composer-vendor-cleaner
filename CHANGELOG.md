@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+
+
 ## 1.1.2 - 2020-02-14
 
 - fixed merging multiple patters for cleaning
