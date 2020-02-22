@@ -6,6 +6,9 @@ use Liborm85\ComposerVendorCleaner\Finder\Glob;
 
 class GlobFilter
 {
+    const ORDER_NONE = '';
+    const ORDER_ASCENDING = 'asc';
+    const ORDER_DESCENDING = 'desc';
 
     /**
      * @var array
@@ -43,9 +46,10 @@ class GlobFilter
 
     /**
      * @param array $entries
+     * @param string $order
      * @return array
      */
-    public function getFilteredEntries($entries)
+    public function getFilteredEntries($entries, $order = self::ORDER_NONE)
     {
         if (empty($entries) || empty($this->includeRegex)) {
             return [];
@@ -54,12 +58,22 @@ class GlobFilter
         $includedEntries = $this->filterEntries($this->includeRegex, $entries);
 
         if (empty($excludedEntries)) {
+            if ($order) {
+                $this->sort($includedEntries, $order);
+            }
+
             return $includedEntries;
         }
 
         $excludedEntries = $this->filterEntries($this->excludeRegex, $entries);
 
-        return array_diff($includedEntries, $excludedEntries);
+        $entries = array_diff($includedEntries, $excludedEntries);
+
+        if ($order) {
+            $this->sort($entries, $order);
+        }
+
+        return $entries;
     }
 
     /**
@@ -90,5 +104,18 @@ class GlobFilter
         }
 
         return $regexPattern;
+    }
+
+    /**
+     * @param array $array
+     * @param string $order
+     */
+    private function sort(&$array, $order)
+    {
+        if ($order === self::ORDER_ASCENDING) {
+            sort($array);
+        } elseif ($order === self::ORDER_DESCENDING) {
+            rsort($array);
+        }
     }
 }
