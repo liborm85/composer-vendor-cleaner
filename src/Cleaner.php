@@ -72,9 +72,11 @@ class Cleaner
         $this->io->write("");
         $this->io->write("Composer vendor cleaner: <info>Cleaning vendor directory</info>");
 
+        $devFilesFinder = new DevFilesFinder($devFiles, $this->matchCase);
+
         foreach ($this->packages as $package) {
-            $devFilesForPackage = $this->findGlobPatternsForPackage($package->getPrettyName(), $devFiles);
-            if (empty($devFilesForPackage)) {
+            $devFilesPatternsForPackage = $devFilesFinder->getGlobPatternsForPackage($package->getPrettyName());
+            if (empty($devFilesPatternsForPackage)) {
                 continue;
             }
 
@@ -82,16 +84,7 @@ class Cleaner
             $directory->addPath($package->getInstallPath());
             $allFiles = $directory->getEntries();
 
-            $globPatterns = $this->buildGlobPatternForFilter($devFilesForPackage);
-
-            $globFilter = new GlobFilter();
-            foreach ($globPatterns as $globPattern) {
-                $globFilter->addInclude($globPattern, $this->matchCase);
-            }
-
-            $filesToRemove = $globFilter->getFilteredEntries($allFiles);
-
-            rsort($filesToRemove);
+            $filesToRemove = $devFilesFinder->getFilteredEntries($allFiles, $devFilesPatternsForPackage);
 
             $this->removeFiles($package->getPrettyName(), $package->getInstallPath(), $filesToRemove);
         }
@@ -142,60 +135,6 @@ class Cleaner
             }
         }
 
-    }
-
-    /**
-     * @param string $packageName
-     * @param array $devFiles
-     * @return array
-     */
-    private function findGlobPatternsForPackage($packageName, $devFiles)
-    {
-        $globPatterns = [];
-
-        $globFilter = new GlobFilter();
-        foreach ($devFiles as $packageGlob => $devFile) {
-            $packageGlobPattern = rtrim($packageGlob, '/');
-            if ($packageGlobPattern === '') {
-                $packageGlobPattern = '*/*';
-            } elseif (strpos($packageGlobPattern, '/') === false) {
-                $packageGlobPattern = '/*';
-            }
-
-            $globFilter->clear();
-            $globFilter->addInclude($packageGlobPattern, $this->matchCase);
-            if (!empty($globFilter->getFilteredEntries([$packageName]))) {
-                $globPatterns = array_merge($globPatterns, $devFile);
-            }
-        }
-
-        return $globPatterns;
-    }
-
-    /**
-     * @param array $patterns
-     * @return array
-     */
-    private function buildGlobPatternForFilter($patterns)
-    {
-        $globPatterns = [];
-        foreach ($patterns as $pattern) {
-            $filePatternPrefix = '';
-            $filePatternSuffix = '';
-            if (substr($pattern, 0, 1) !== '/') {
-                $filePatternPrefix = '/**/';
-            }
-
-            if (substr($pattern, -1) === '/') {
-                $filePatternSuffix = '**';
-            }
-
-            $globPattern = '/' . ltrim($filePatternPrefix . $pattern . $filePatternSuffix, '/');
-
-            $globPatterns[] = $globPattern;
-        }
-
-        return $globPatterns;
     }
 
     /**
