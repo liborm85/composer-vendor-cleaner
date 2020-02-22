@@ -50,6 +50,28 @@ class GlobFilterTest extends TestCase
         );
     }
 
+    public function testExcludeMatchCase()
+    {
+        $globFilter = new GlobFilter();
+        $globFilter->addInclude('*.*');
+        $globFilter->addExclude('*.php');
+        self::assertEquals(
+            ['TEST.PHP', 'test.docx', 'Test.docx', 'TEST.DOCX',],
+            $globFilter->getFilteredEntries($this->simpleEntriesArray)
+        );
+    }
+
+    public function testExcludeNoMatchCase()
+    {
+        $globFilter = new GlobFilter();
+        $globFilter->addInclude('*.*', false);
+        $globFilter->addExclude('*.php', false);
+        self::assertEquals(
+            ['test.docx', 'Test.docx', 'TEST.DOCX',],
+            $globFilter->getFilteredEntries($this->simpleEntriesArray)
+        );
+    }
+
     public function testEmptyInclude()
     {
         $globFilter = new GlobFilter();

@@ -57,7 +57,7 @@ class GlobFilter
 
         $includedEntries = $this->filterEntries($this->includeRegex, $entries);
 
-        if (empty($excludedEntries)) {
+        if (empty($this->excludeRegex)) {
             if ($order) {
                 $this->sort($includedEntries, $order);
             }
@@ -67,7 +67,7 @@ class GlobFilter
 
         $excludedEntries = $this->filterEntries($this->excludeRegex, $entries);
 
-        $entries = array_diff($includedEntries, $excludedEntries);
+        $entries = array_values(array_diff($includedEntries, $excludedEntries));
 
         if ($order) {
             $this->sort($entries, $order);
