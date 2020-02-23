@@ -24,10 +24,16 @@ Example:
 ```
 "extra": {
     "dev-files": {
-        "/": [                  // shortcut for "*/*", means: find in all library packages directories
+        "/": [                  // means: find in all library packages directories and bin directory
             "tests/",           // means: tests directory whatever
             "docs/",
             ".travis.yml"       // means: .travis.yml file whatever
+        ],
+        "*/*": [                // means: find in all library packages directories, but NOT in bin directory
+            "*.sh"
+        ],
+        "bin": [                // means: find in composer bin directory
+            "*.bat"
         ],
         "twig/twig": [          // means: find only in twig/twig package directory
             "doc/"

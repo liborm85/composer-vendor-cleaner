@@ -26,6 +26,11 @@ class Cleaner
     private $vendorDir;
 
     /**
+     * @var string
+     */
+    private $binDir;
+
+    /**
      * @var Package[]
      */
     private $packages;
@@ -49,14 +54,16 @@ class Cleaner
      * @param IOInterface $io
      * @param Filesystem $filesystem
      * @param string $vendorDir
+     * @param string $binDir
      * @param Package[] $packages
      * @param bool $matchCase
      */
-    public function __construct($io, $filesystem, $vendorDir, $packages, $matchCase)
+    public function __construct($io, $filesystem, $vendorDir, $binDir, $packages, $matchCase)
     {
         $this->io = $io;
         $this->filesystem = $filesystem;
         $this->vendorDir = $vendorDir;
+        $this->binDir = $binDir;
         $this->packages = $packages;
         $this->matchCase = $matchCase;
     }
@@ -80,13 +87,18 @@ class Cleaner
                 continue;
             }
 
-            $directory = new Directory();
-            $directory->addPath($package->getInstallPath());
-            $allFiles = $directory->getEntries();
-
+            $allFiles = $this->getDirectoryEntries($package->getInstallPath());
             $filesToRemove = $devFilesFinder->getFilteredEntries($allFiles, $devFilesPatternsForPackage);
 
             $this->removeFiles($package->getPrettyName(), $package->getInstallPath(), $filesToRemove);
+        }
+
+        $devFilesPatternsForBin = $devFilesFinder->getGlobPatternsForPackage('bin');
+        if (!empty($devFilesPatternsForBin)) {
+            $allFiles = $this->getDirectoryEntries($this->binDir);
+            $filesToRemove = $devFilesFinder->getFilteredEntries($allFiles, $devFilesPatternsForBin);
+
+            $this->removeFiles('bin', $this->binDir, $filesToRemove);
         }
 
         $packagesCount = count($this->packages);
@@ -134,7 +146,18 @@ class Cleaner
                 );
             }
         }
+    }
 
+    /**
+     * @param $path
+     * @return array
+     */
+    private function getDirectoryEntries($path)
+    {
+        $directory = new Directory();
+        $directory->addPath($path);
+
+        return $directory->getEntries();
     }
 
     /**

@@ -4,7 +4,7 @@ namespace Liborm85\ComposerVendorCleaner\Tests;
 
 use Liborm85\ComposerVendorCleaner\DevFilesFinder;
 
-class DevFilesFinderTest
+class DevFilesFinderTest extends TestCase
 {
 
     public function testGetGlobPatternsForPackage()
@@ -13,11 +13,20 @@ class DevFilesFinderTest
             '/' => [
                 'all-directories',
             ],
+            'bin' => [
+                'bin-directory',
+            ],
+            'binabc' => [
+                'it-is-not-bin-directory',
+            ],
             '*/*' => [
                 'all-packages',
             ],
             'fake/*' => [
                 'fake-namespace',
+            ],
+            'fake/' => [
+                'fake-namespace2',
             ],
             '*/package' => [
                 'all-namespaces-and-package',
@@ -29,13 +38,13 @@ class DevFilesFinderTest
                 'all-namespaces-and-package2',
             ],
         ];
-        $devFilesFinder = new DevFilesFinder($devFiles);
+        $devFilesFinder = new DevFilesFinder($devFiles, false);
         self::assertEquals(
-            ['all-directories', 'all-packages', 'fake-namespace', 'all-namespaces-and-package',],
+            ['all-directories', 'all-packages', 'fake-namespace', 'fake-namespace2', 'all-namespaces-and-package',],
             $devFilesFinder->getGlobPatternsForPackage('fake/package')
         );
         self::assertEquals(
-            ['all-directories', 'all-packages', 'fake-namespace',],
+            ['all-directories', 'all-packages', 'fake-namespace', 'fake-namespace2',],
             $devFilesFinder->getGlobPatternsForPackage('fake/otherpackage')
         );
         self::assertEquals(
@@ -45,6 +54,10 @@ class DevFilesFinderTest
         self::assertEquals(
             ['all-directories', 'all-packages',],
             $devFilesFinder->getGlobPatternsForPackage('otherfake/otherpackage')
+        );
+        self::assertEquals(
+            ['all-directories', 'bin-directory',],
+            $devFilesFinder->getGlobPatternsForPackage('bin')
         );
     }
 

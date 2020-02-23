@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- new cleanup in composer `bin` directory
 
 ## 1.1.2 - 2020-02-14
 

@@ -100,10 +100,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $matchCase = isset($pluginConfig['match-case']) ? (bool)$pluginConfig['match-case'] : true;
 
         $vendorDir = $this->config->get('vendor-dir');
+        $binDir = $this->config->get('bin-dir');
 
         $packages = $this->getPackages();
 
-        $cleaner = new Cleaner($this->io, $this->filesystem, $vendorDir, $packages, $matchCase);
+        $cleaner = new Cleaner($this->io, $this->filesystem, $vendorDir, $binDir, $packages, $matchCase);
         $cleaner->cleanup($devFiles);
     }
 

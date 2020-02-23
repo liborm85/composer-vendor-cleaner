@@ -34,15 +34,18 @@ class DevFilesFinder
 
         $globFilter = new GlobFilter();
         foreach ($this->devFiles as $packageGlob => $devFile) {
+            $globFilter->clear();
             $packageGlobPattern = rtrim($packageGlob, '/');
             if ($packageGlobPattern === '') {
-                $packageGlobPattern = '*/*';
+                $globFilter->addInclude('*', $this->matchCase);
+                $globFilter->addInclude('*/*', $this->matchCase);
             } elseif (strpos($packageGlobPattern, '/') === false) {
-                $packageGlobPattern = '/*';
+                $globFilter->addInclude($packageGlobPattern , $this->matchCase);
+                $globFilter->addInclude($packageGlobPattern . '/*', $this->matchCase);
+            } else {
+                $globFilter->addInclude($packageGlobPattern, $this->matchCase);
             }
 
-            $globFilter->clear();
-            $globFilter->addInclude($packageGlobPattern, $this->matchCase);
             if (!empty($globFilter->getFilteredEntries([$packageName]))) {
                 $globPatterns = array_merge($globPatterns, $devFile);
             }
