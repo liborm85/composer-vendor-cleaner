@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- new cleanup in composer `bin` directory
+- feature for cleanup in composer `bin` directory
+- feature for removes empty directories
 
 ## 1.1.2 - 2020-02-14
 

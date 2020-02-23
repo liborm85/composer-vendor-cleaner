@@ -98,13 +98,14 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
         $pluginConfig = $this->config->get(self::DEV_FILES_KEY);
         $matchCase = isset($pluginConfig['match-case']) ? (bool)$pluginConfig['match-case'] : true;
+        $removeEmptyDirs = isset($pluginConfig['remove-empty-dirs']) ? (bool)$pluginConfig['remove-empty-dirs'] : true;
 
         $vendorDir = $this->config->get('vendor-dir');
         $binDir = $this->config->get('bin-dir');
 
         $packages = $this->getPackages();
 
-        $cleaner = new Cleaner($this->io, $this->filesystem, $vendorDir, $binDir, $packages, $matchCase);
+        $cleaner = new Cleaner($this->io, $this->filesystem, $vendorDir, $binDir, $packages, $matchCase, $removeEmptyDirs);
         $cleaner->cleanup($devFiles);
     }
 

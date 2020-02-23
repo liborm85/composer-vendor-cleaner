@@ -52,12 +52,14 @@ Example:
 For additional configuration can be used [`config`](https://getcomposer.org/doc/04-schema.md#config) attribute.
 
 - `match-case` _(default: true)_ - Match case of name files and directories.
+- `remove-empty-dirs` _(default: true)_ - Removes empty directories.
 
 Example:
 ```
 "config": {
     "dev-files": {
-        "match-case": false
+        "match-case": false,
+        "remove-empty-dirs": false
     }
 }
 ```

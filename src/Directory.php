@@ -47,4 +47,27 @@ class Directory
         return $entries;
     }
 
+    /**
+     * @return array
+     */
+    public function getDirectories()
+    {
+        $entries = [];
+        foreach ($this->paths as $path) {
+            $directory = new RecursiveDirectoryIterator($path, FilesystemIterator::UNIX_PATHS);
+            /** @var $iterator RecursiveDirectoryIterator */
+            $iterator = new RecursiveIteratorIterator($directory);
+
+            foreach ($iterator as $file) {
+                $fileSubPath = $iterator->getSubPathname();
+                if (substr($fileSubPath, -2) === '/.') {
+                    $fileSubPath = rtrim($fileSubPath, '.');
+                    $entries[] = '/' . $fileSubPath;
+                }
+            }
+        }
+
+        return $entries;
+    }
+
 }

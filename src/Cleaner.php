@@ -41,6 +41,11 @@ class Cleaner
     private $matchCase;
 
     /**
+     * @var bool
+     */
+    private $removeEmptyDirs;
+
+    /**
      * @var int
      */
     private $removedDirectories = 0;
@@ -51,6 +56,11 @@ class Cleaner
     private $removedFiles = 0;
 
     /**
+     * @var int
+     */
+    private $removedEmptyDirectories = 0;
+
+    /**
      * @param IOInterface $io
      * @param Filesystem $filesystem
      * @param string $vendorDir
@@ -58,7 +68,7 @@ class Cleaner
      * @param Package[] $packages
      * @param bool $matchCase
      */
-    public function __construct($io, $filesystem, $vendorDir, $binDir, $packages, $matchCase)
+    public function __construct($io, $filesystem, $vendorDir, $binDir, $packages, $matchCase, $removeEmptyDirs)
     {
         $this->io = $io;
         $this->filesystem = $filesystem;
@@ -66,6 +76,7 @@ class Cleaner
         $this->binDir = $binDir;
         $this->packages = $packages;
         $this->matchCase = $matchCase;
+        $this->removeEmptyDirs = $removeEmptyDirs;
     }
 
     /**
@@ -101,11 +112,53 @@ class Cleaner
             $this->removeFiles('bin', $this->binDir, $filesToRemove);
         }
 
+        if ($this->removeEmptyDirs) {
+            foreach ($this->packages as $package) {
+                $this->removeEmptyDirectories($package->getInstallPath());
+            }
+
+            $this->removeEmptyDirectories($this->binDir);
+        }
+
         $packagesCount = count($this->packages);
 
-        $this->io->write(
-            "Composer vendor cleaner: <info>Removed {$this->removedFiles} files and {$this->removedDirectories} directories from {$packagesCount} packages</info>"
-        );
+        if ($this->removedEmptyDirectories) {
+            $this->io->write(
+                "Composer vendor cleaner: <info>Removed {$this->removedFiles} files and {$this->removedDirectories} (of which {$this->removedEmptyDirectories} are empty) directories from {$packagesCount} packages</info>"
+            );
+        } else {
+            $this->io->write(
+                "Composer vendor cleaner: <info>Removed {$this->removedFiles} files and {$this->removedDirectories} directories from {$packagesCount} packages</info>"
+            );
+        }
+    }
+
+    /**
+     * @param string $path
+     */
+    private function removeEmptyDirectories($path)
+    {
+        $directory = new Directory();
+        $directory->addPath($path);
+        $directories = $directory->getDirectories();
+        rsort($directories);
+
+        foreach ($directories as $directory) {
+            $filepath = $path . $directory;
+            if (!$this->isEmptyDirectory($filepath)) {
+                continue;
+            }
+
+            $this->filesystem->removeDirectory($filepath);
+            $this->removedDirectories++;
+            $this->removedEmptyDirectories++;
+        }
+
+        if ($this->isEmptyDirectory($path)) {
+            $this->filesystem->removeDirectory($path);
+            $this->removedDirectories++;
+            $this->removedEmptyDirectories++;
+        }
     }
 
     /**
