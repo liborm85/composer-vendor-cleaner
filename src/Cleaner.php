@@ -104,12 +104,14 @@ class Cleaner
             $this->removeFiles($package->getPrettyName(), $package->getInstallPath(), $filesToRemove);
         }
 
-        $devFilesPatternsForBin = $devFilesFinder->getGlobPatternsForPackage('bin');
-        if (!empty($devFilesPatternsForBin)) {
+        if (file_exists($this->binDir)) {
+          $devFilesPatternsForBin = $devFilesFinder->getGlobPatternsForPackage('bin');
+          if (!empty($devFilesPatternsForBin)) {
             $allFiles = $this->getDirectoryEntries($this->binDir);
             $filesToRemove = $devFilesFinder->getFilteredEntries($allFiles, $devFilesPatternsForBin);
 
             $this->removeFiles('bin', $this->binDir, $filesToRemove);
+          }
         }
 
         if ($this->removeEmptyDirs) {
@@ -117,7 +119,9 @@ class Cleaner
                 $this->removeEmptyDirectories($package->getInstallPath());
             }
 
-            $this->removeEmptyDirectories($this->binDir);
+            if (file_exists($this->binDir)) {
+              $this->removeEmptyDirectories($this->binDir);
+            }
         }
 
         $packagesCount = count($this->packages);
