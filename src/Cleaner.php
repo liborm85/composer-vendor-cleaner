@@ -67,6 +67,7 @@ class Cleaner
      * @param string $binDir
      * @param Package[] $packages
      * @param bool $matchCase
+     * @param $removeEmptyDirs
      */
     public function __construct($io, $filesystem, $vendorDir, $binDir, $packages, $matchCase, $removeEmptyDirs)
     {
