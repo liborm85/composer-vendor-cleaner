@@ -40,14 +40,24 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     private $filesystem;
 
     /**
+     * @var Cleaner
+     */
+    private $cleaner;
+
+    /**
      * @var bool
      */
-    private $isCleaned = false;
+    private $isCleanedPackages = false;
 
     /**
      * @var array
      */
     private $changedPackages = [];
+
+    /**
+     * @var bool
+     */
+    private $actionIsDumpAutoload = true;
 
     /**
      * @inheritDoc
@@ -56,11 +66,18 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     {
         return [
             ScriptEvents::PRE_AUTOLOAD_DUMP => 'cleanup',
+            ScriptEvents::PRE_UPDATE_CMD => 'preInstall',
+            ScriptEvents::PRE_INSTALL_CMD => 'preInstall',
             ScriptEvents::POST_UPDATE_CMD => 'cleanup',
             ScriptEvents::POST_INSTALL_CMD => 'cleanup',
             PackageEvents::POST_PACKAGE_INSTALL => 'addPackage',
             PackageEvents::POST_PACKAGE_UPDATE => 'addPackage',
         ];
+    }
+
+    public function preInstall(Event $event)
+    {
+        $this->actionIsDumpAutoload = false;
     }
 
     /**
@@ -72,6 +89,17 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $this->io = $io;
         $this->config = $composer->getConfig();
         $this->filesystem = new Filesystem();
+
+        $package = $this->composer->getPackage();
+        $extra = $package->getExtra();
+        $devFiles = isset($extra[self::DEV_FILES_KEY]) ? $extra[self::DEV_FILES_KEY] : null;
+        if ($devFiles) {
+            $pluginConfig = $this->config->get(self::DEV_FILES_KEY);
+            $matchCase = isset($pluginConfig['match-case']) ? (bool)$pluginConfig['match-case'] : true;
+            $removeEmptyDirs = isset($pluginConfig['remove-empty-dirs']) ? (bool)$pluginConfig['remove-empty-dirs'] : true;
+
+            $this->cleaner = new Cleaner($this->io, $this->filesystem, $devFiles, $matchCase, $removeEmptyDirs);
+        }
     }
 
     public function addPackage(PackageEvent $event)
@@ -83,30 +111,20 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
     public function cleanup(Event $event)
     {
-        if ($this->isCleaned) { // fire event only once
+        if (!$this->cleaner) { // cleaner not enabled/configured in project
             return;
         }
 
-        $this->isCleaned = true;
-
-        $package = $this->composer->getPackage();
-        $extra = $package->getExtra();
-        $devFiles = isset($extra[self::DEV_FILES_KEY]) ? $extra[self::DEV_FILES_KEY] : null;
-        if (!$devFiles) {
-            return;
+        if (!$this->isCleanedPackages) {
+            $this->cleaner->cleanupPackages($this->getPackages());
         }
 
-        $pluginConfig = $this->config->get(self::DEV_FILES_KEY);
-        $matchCase = isset($pluginConfig['match-case']) ? (bool)$pluginConfig['match-case'] : true;
-        $removeEmptyDirs = isset($pluginConfig['remove-empty-dirs']) ? (bool)$pluginConfig['remove-empty-dirs'] : true;
+        if ($this->actionIsDumpAutoload || $this->isCleanedPackages) {
+            $this->cleaner->cleanupBinary($this->config->get('bin-dir'));
+            $this->cleaner->finishCleanup();
+        }
 
-        $vendorDir = $this->config->get('vendor-dir');
-        $binDir = $this->config->get('bin-dir');
-
-        $packages = $this->getPackages();
-
-        $cleaner = new Cleaner($this->io, $this->filesystem, $vendorDir, $binDir, $packages, $matchCase, $removeEmptyDirs);
-        $cleaner->cleanup($devFiles);
+        $this->isCleanedPackages = true;
     }
 
     /**

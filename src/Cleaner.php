@@ -21,29 +21,24 @@ class Cleaner
     private $filesystem;
 
     /**
-     * @var string
-     */
-    private $vendorDir;
-
-    /**
-     * @var string
-     */
-    private $binDir;
-
-    /**
-     * @var Package[]
-     */
-    private $packages;
-
-    /**
      * @var bool
      */
     private $matchCase;
 
     /**
+     * @var array
+     */
+    private $devFiles;
+
+    /**
      * @var bool
      */
     private $removeEmptyDirs;
+
+    /**
+     * @var int
+     */
+    private $packagesCount;
 
     /**
      * @var int
@@ -63,37 +58,32 @@ class Cleaner
     /**
      * @param IOInterface $io
      * @param Filesystem $filesystem
-     * @param string $vendorDir
-     * @param string $binDir
-     * @param Package[] $packages
+     * @param array $devFiles
      * @param bool $matchCase
-     * @param $removeEmptyDirs
+     * @param bool $removeEmptyDirs
      */
-    public function __construct($io, $filesystem, $vendorDir, $binDir, $packages, $matchCase, $removeEmptyDirs)
+    public function __construct($io, $filesystem, $devFiles, $matchCase, $removeEmptyDirs)
     {
         $this->io = $io;
         $this->filesystem = $filesystem;
-        $this->vendorDir = $vendorDir;
-        $this->binDir = $binDir;
-        $this->packages = $packages;
+        $this->devFiles = $devFiles;
         $this->matchCase = $matchCase;
         $this->removeEmptyDirs = $removeEmptyDirs;
     }
 
     /**
-     * @param array $devFiles
+     * @param Package[] $packages
      */
-    public function cleanup($devFiles)
+    public function cleanupPackages($packages)
     {
-        $this->removedDirectories = 0;
-        $this->removedFiles = 0;
-
         $this->io->write("");
-        $this->io->write("Composer vendor cleaner: <info>Cleaning vendor directory</info>");
+        $this->io->write("Composer vendor cleaner: <info>Cleaning packages in vendor directory</info>");
 
-        $devFilesFinder = new DevFilesFinder($devFiles, $this->matchCase);
+        $this->packagesCount = count($packages);
 
-        foreach ($this->packages as $package) {
+        $devFilesFinder = new DevFilesFinder($this->devFiles, $this->matchCase);
+
+        foreach ($packages as $package) {
             $devFilesPatternsForPackage = $devFilesFinder->getGlobPatternsForPackage($package->getPrettyName());
             if (empty($devFilesPatternsForPackage)) {
                 continue;
@@ -105,37 +95,51 @@ class Cleaner
             $this->removeFiles($package->getPrettyName(), $package->getInstallPath(), $filesToRemove);
         }
 
-        if (file_exists($this->binDir)) {
-          $devFilesPatternsForBin = $devFilesFinder->getGlobPatternsForPackage('bin');
-          if (!empty($devFilesPatternsForBin)) {
-            $allFiles = $this->getDirectoryEntries($this->binDir);
+        if ($this->removeEmptyDirs) {
+            foreach ($packages as $package) {
+                $this->removeEmptyDirectories($package->getInstallPath());
+            }
+        }
+    }
+
+    /**
+     * @param string $binDir
+     */
+    public function cleanupBinary($binDir)
+    {
+        if (!file_exists($binDir)) {
+            return;
+        }
+        
+        $this->io->write("Composer vendor cleaner: <info>Cleaning vendor binary directory</info>");
+
+        $devFilesFinder = new DevFilesFinder($this->devFiles, $this->matchCase);
+
+        $devFilesPatternsForBin = $devFilesFinder->getGlobPatternsForPackage('bin');
+        if (!empty($devFilesPatternsForBin)) {
+            $allFiles = $this->getDirectoryEntries($binDir);
             $filesToRemove = $devFilesFinder->getFilteredEntries($allFiles, $devFilesPatternsForBin);
 
-            $this->removeFiles('bin', $this->binDir, $filesToRemove);
-          }
+            $this->removeFiles('bin', $binDir, $filesToRemove);
         }
 
         if ($this->removeEmptyDirs) {
-            foreach ($this->packages as $package) {
-                $this->removeEmptyDirectories($package->getInstallPath());
-            }
-
-            if (file_exists($this->binDir)) {
-              $this->removeEmptyDirectories($this->binDir);
-            }
+            $this->removeEmptyDirectories($binDir);
         }
+    }
 
-        $packagesCount = count($this->packages);
-
+    public function finishCleanup()
+    {
         if ($this->removedEmptyDirectories) {
             $this->io->write(
-                "Composer vendor cleaner: <info>Removed {$this->removedFiles} files and {$this->removedDirectories} (of which {$this->removedEmptyDirectories} are empty) directories from {$packagesCount} packages</info>"
+                "Composer vendor cleaner: <info>Removed {$this->removedFiles} files and {$this->removedDirectories} (of which {$this->removedEmptyDirectories} are empty) directories from {$this->packagesCount} packages</info>"
             );
         } else {
             $this->io->write(
-                "Composer vendor cleaner: <info>Removed {$this->removedFiles} files and {$this->removedDirectories} directories from {$packagesCount} packages</info>"
+                "Composer vendor cleaner: <info>Removed {$this->removedFiles} files and {$this->removedDirectories} directories from {$this->packagesCount} packages</info>"
             );
         }
+        $this->io->write("");
     }
 
     /**
