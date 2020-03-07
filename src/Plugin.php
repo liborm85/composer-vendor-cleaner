@@ -3,7 +3,6 @@
 namespace Liborm85\ComposerVendorCleaner;
 
 use Composer\Composer;
-use Composer\Config;
 use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\EventDispatcher\EventSubscriberInterface;
@@ -25,19 +24,14 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     private $composer;
 
     /**
-     * @var IOInterface
-     */
-    private $io;
-
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
      * @var Cleaner
      */
     private $cleaner;
+
+    /**
+     * @var string
+     */
+    private $binDir;
 
     /**
      * @var bool
@@ -81,18 +75,17 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     public function activate(Composer $composer, IOInterface $io)
     {
         $this->composer = $composer;
-        $this->io = $io;
-        $this->config = $composer->getConfig();
 
         $package = $this->composer->getPackage();
         $extra = $package->getExtra();
         $devFiles = isset($extra[self::DEV_FILES_KEY]) ? $extra[self::DEV_FILES_KEY] : null;
         if ($devFiles) {
-            $pluginConfig = $this->config->get(self::DEV_FILES_KEY);
+            $this->binDir = $this->composer->getConfig()->get('bin-dir');
+            $pluginConfig = $this->composer->getConfig()->get(self::DEV_FILES_KEY);
             $matchCase = isset($pluginConfig['match-case']) ? (bool)$pluginConfig['match-case'] : true;
             $removeEmptyDirs = isset($pluginConfig['remove-empty-dirs']) ? (bool)$pluginConfig['remove-empty-dirs'] : true;
 
-            $this->cleaner = new Cleaner($this->io, new Filesystem(), $devFiles, $matchCase, $removeEmptyDirs);
+            $this->cleaner = new Cleaner($io, new Filesystem(), $devFiles, $matchCase, $removeEmptyDirs);
         }
     }
 
@@ -114,7 +107,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         }
 
         if ($this->actionIsDumpAutoload || $this->isCleanedPackages) {
-            $this->cleaner->cleanupBinary($this->config->get('bin-dir'));
+            $this->cleaner->cleanupBinary($this->binDir);
             $this->cleaner->finishCleanup();
         }
 
