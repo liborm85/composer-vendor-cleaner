@@ -35,11 +35,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     private $config;
 
     /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
-    /**
      * @var Cleaner
      */
     private $cleaner;
@@ -88,7 +83,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $this->composer = $composer;
         $this->io = $io;
         $this->config = $composer->getConfig();
-        $this->filesystem = new Filesystem();
 
         $package = $this->composer->getPackage();
         $extra = $package->getExtra();
@@ -98,7 +92,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
             $matchCase = isset($pluginConfig['match-case']) ? (bool)$pluginConfig['match-case'] : true;
             $removeEmptyDirs = isset($pluginConfig['remove-empty-dirs']) ? (bool)$pluginConfig['remove-empty-dirs'] : true;
 
-            $this->cleaner = new Cleaner($this->io, $this->filesystem, $devFiles, $matchCase, $removeEmptyDirs);
+            $this->cleaner = new Cleaner($this->io, new Filesystem(), $devFiles, $matchCase, $removeEmptyDirs);
         }
     }
 
