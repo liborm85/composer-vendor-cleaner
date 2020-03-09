@@ -24,6 +24,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     private $composer;
 
     /**
+     * @var IOInterface
+     */
+    private $io;
+
+    /**
      * @var Cleaner
      */
     private $cleaner;
@@ -75,6 +80,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     public function activate(Composer $composer, IOInterface $io)
     {
         $this->composer = $composer;
+        $this->io = $io;
 
         $package = $this->composer->getPackage();
         $extra = $package->getExtra();
@@ -85,7 +91,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
             $matchCase = isset($pluginConfig['match-case']) ? (bool)$pluginConfig['match-case'] : true;
             $removeEmptyDirs = isset($pluginConfig['remove-empty-dirs']) ? (bool)$pluginConfig['remove-empty-dirs'] : true;
 
-            $this->cleaner = new Cleaner($io, new Filesystem(), $devFiles, $matchCase, $removeEmptyDirs);
+            $this->cleaner = new Cleaner($this->io, new Filesystem(), $devFiles, $matchCase, $removeEmptyDirs);
         }
     }
 
@@ -101,6 +107,12 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         if (!$this->cleaner) { // cleaner not enabled/configured in project
             return;
         }
+
+        $this->io->write(
+            "Composer vendor cleaner: Triggered event '<info>{$event->getName()}</info>'",
+            true,
+            IOInterface::VERBOSE
+        );
 
         if (!$this->isCleanedPackages) {
             $this->cleaner->cleanupPackages($this->getPackages());
