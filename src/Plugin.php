@@ -71,6 +71,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
     public function preInstall(Event $event)
     {
+        // Not triggered when this plugin is installing. Solves the method addPackage.
+
         $this->actionIsDumpAutoload = false;
     }
 
@@ -97,6 +99,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
     public function addPackage(PackageEvent $event)
     {
+        // If this plugin is installing here is set install/update mode (solves not triggered the method preInstall).
+        if ($this->actionIsDumpAutoload) {
+            $this->actionIsDumpAutoload = false;
+        }
+
         /** @var InstallOperation|UpdateOperation $operation */
         $operation = $event->getOperation();
         $this->changedPackages[] = $operation->getPackage()->getPrettyName();
