@@ -97,7 +97,7 @@ class Cleaner
 
         if ($this->removeEmptyDirs) {
             foreach ($packages as $package) {
-                $this->removeEmptyDirectories($package->getInstallPath());
+                $this->removeEmptyDirectories($package->getPrettyName(), $package->getInstallPath());
             }
         }
     }
@@ -110,7 +110,7 @@ class Cleaner
         if (!file_exists($binDir)) {
             return;
         }
-        
+
         $this->io->write("Composer vendor cleaner: <info>Cleaning vendor binary directory</info>");
 
         $devFilesFinder = new DevFilesFinder($this->devFiles, $this->matchCase);
@@ -124,7 +124,7 @@ class Cleaner
         }
 
         if ($this->removeEmptyDirs) {
-            $this->removeEmptyDirectories($binDir);
+            $this->removeEmptyDirectories('bin', $binDir);
         }
     }
 
@@ -143,9 +143,10 @@ class Cleaner
     }
 
     /**
+     * @param string $packageName
      * @param string $path
      */
-    private function removeEmptyDirectories($path)
+    private function removeEmptyDirectories($packageName, $path)
     {
         $directory = new Directory();
         $directory->addPath($path);
@@ -159,12 +160,24 @@ class Cleaner
             }
 
             $this->filesystem->removeDirectory($filepath);
+
+            $this->io->write(
+                "Composer vendor cleaner: Empty directory '<info>{$directory}</info>' from package <info>{$packageName}</info> removed",
+                true,
+                IOInterface::VERBOSE
+            );
             $this->removedDirectories++;
             $this->removedEmptyDirectories++;
         }
 
         if ($this->isEmptyDirectory($path)) {
             $this->filesystem->removeDirectory($path);
+
+            $this->io->write(
+                "Composer vendor cleaner: Empty directory '<info>{$path}</info>' from package <info>{$packageName}</info> removed",
+                true,
+                IOInterface::VERBOSE
+            );
             $this->removedDirectories++;
             $this->removedEmptyDirectories++;
         }
