@@ -173,8 +173,9 @@ class Cleaner
         if ($this->isEmptyDirectory($path)) {
             $this->filesystem->removeDirectory($path);
 
+            $directory = basename($path);
             $this->io->write(
-                "Composer vendor cleaner: Empty directory '<info>{$path}</info>' from package <info>{$packageName}</info> removed",
+                "Composer vendor cleaner: Empty directory '<info>{$directory}</info>' from package <info>{$packageName}</info> removed",
                 true,
                 IOInterface::VERBOSE
             );
