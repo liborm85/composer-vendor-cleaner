@@ -100,7 +100,16 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
         /** @var InstallOperation|UpdateOperation $operation */
         $operation = $event->getOperation();
-        $this->changedPackages[] = $operation->getPackage()->getPrettyName();
+
+        if ($operation instanceof InstallOperation) {
+            $package = $operation->getPackage();
+        } elseif ($operation instanceof UpdateOperation) {
+            $package = $operation->getTargetPackage();
+        }
+
+        if (isset($package)) {
+            $this->changedPackages[] = $package->getPrettyName();
+        }
     }
 
     public function cleanup(Event $event)
