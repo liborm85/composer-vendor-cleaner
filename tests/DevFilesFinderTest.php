@@ -6,6 +6,20 @@ use Liborm85\ComposerVendorCleaner\DevFilesFinder;
 
 class DevFilesFinderTest extends TestCase
 {
+    /**
+     * @var string[]
+     */
+    private $simpleEntriesArray = [
+        '/src/file.php',
+        '/src/File.php',
+        '/src/FILE.PHP',
+        '/tests/test.php',
+        '/tests/Test.php',
+        '/tests/TEST.PHP',
+        '/tests/test.docx',
+        '/tests/Test.docx',
+        '/tests/TEST.DOCX',
+    ];
 
     public function testGetGlobPatternsForPackage()
     {
@@ -58,6 +72,27 @@ class DevFilesFinderTest extends TestCase
         self::assertEquals(
             ['all-directories', 'bin-directory',],
             $devFilesFinder->getGlobPatternsForPackage('bin')
+        );
+    }
+
+    public function testGetFilteredEntries()
+    {
+        $patterns = [
+            '/tests/**',
+        ];
+
+        $devFiles = [];
+        $devFilesFinder = new DevFilesFinder($devFiles, false);
+        self::assertEquals(
+            [
+                '/tests/test.php',
+                '/tests/test.docx',
+                '/tests/Test.php',
+                '/tests/Test.docx',
+                '/tests/TEST.PHP',
+                '/tests/TEST.DOCX',
+            ],
+            $devFilesFinder->getFilteredEntries($this->simpleEntriesArray, $patterns)
         );
     }
 
