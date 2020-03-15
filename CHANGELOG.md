@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.0 - 2020-03-15
 
 - feature for cleanup in composer `bin` directory
 - feature for removes empty directories
