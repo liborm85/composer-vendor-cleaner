@@ -49,6 +49,18 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     private $actionIsDumpAutoload = true;
 
     /**
+     * @var bool
+     */
+    private $isCleaningFinished = false;
+
+    public function __destruct()
+    {
+        if (!$this->cleaner && !$this->isCleaningFinished) {
+            $this->cleaner->finishCleanup();
+        }
+    }
+
+    /**
      * @inheritDoc
      */
     public static function getSubscribedEvents()
@@ -125,6 +137,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         if ($this->actionIsDumpAutoload || $this->isCleanedPackages) {
             $this->cleaner->cleanupBinary($this->binDir);
             $this->cleaner->finishCleanup();
+
+            $this->isCleaningFinished = true;
         }
 
         $this->isCleanedPackages = true;

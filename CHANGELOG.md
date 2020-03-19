@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- fixed displaying the cleanup result when using a parameter `--no-autoloader`
+
 ## 1.2.0 - 2020-03-15
 
 - feature for cleanup in composer `bin` directory
