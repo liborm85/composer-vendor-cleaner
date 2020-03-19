@@ -64,13 +64,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         ];
     }
 
-    public function preInstall(Event $event)
-    {
-        // Not triggered when this plugin is installing. Solves the method addPackage.
-
-        $this->actionIsDumpAutoload = false;
-    }
-
     /**
      * @inheritDoc
      */
@@ -89,6 +82,13 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
             $this->cleaner = new Cleaner($io, new Filesystem(), $devFiles, $matchCase, $removeEmptyDirs);
         }
+    }
+
+    public function preInstall(Event $event)
+    {
+        // Not triggered when this plugin is installing. Solves the method addPackage.
+
+        $this->actionIsDumpAutoload = false;
     }
 
     public function addPackage(PackageEvent $event)
