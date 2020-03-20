@@ -55,7 +55,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
     public function __destruct()
     {
-        if ($this->cleaner && !$this->isCleaningFinished) {
+        if ($this->cleaner && $this->isCleanedPackages && !$this->isCleaningFinished) {
             $this->cleaner->finishCleanup();
         }
     }
