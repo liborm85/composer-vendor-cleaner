@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- fixed removing invalid symlinks
+
 ## 1.2.1 - 2020-03-20
 
 - fixed displaying the cleanup result when using a parameter `--no-autoloader`
