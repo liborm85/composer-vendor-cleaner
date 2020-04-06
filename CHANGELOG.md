@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.2 - 2020-04-06
 
 - fixed removing invalid symlinks
 
