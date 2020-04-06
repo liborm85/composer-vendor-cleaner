@@ -212,7 +212,7 @@ class Cleaner
                 );
                 $this->removedDirectories++;
             } else {
-                $this->filesystem->remove($filepath);
+                $this->filesystem->unlink($filepath);
 
                 $this->removedFiles++;
                 $this->io->write(
