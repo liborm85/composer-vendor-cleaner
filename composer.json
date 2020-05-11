@@ -29,7 +29,7 @@
     },
     "require-dev": {
         "composer/composer": "^1.1 || 2.0.*@dev",
-        "phpunit/phpunit": "^5.7 || ^6.5 || ^7.5 || ^8.4"
+        "phpunit/phpunit": "^5.7 || ^6.5 || ^7.5 || ^8.4 || ^9.1"
     },
     "scripts": {
         "test": "phpunit"
