@@ -25,10 +25,10 @@
         "source": "https://github.com/liborm85/composer-vendor-cleaner"
     },
     "require": {
-        "composer-plugin-api": "^1.1"
+        "composer-plugin-api": "^1.1 || ^2.0"
     },
     "require-dev": {
-        "composer/composer": "^1.1",
+        "composer/composer": "^1.1 || 2.0.*@dev",
         "phpunit/phpunit": "^5.7 || ^6.5 || ^7.5 || ^8.4"
     },
     "scripts": {

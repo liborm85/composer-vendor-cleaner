@@ -96,6 +96,20 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         }
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function deactivate(Composer $composer, IOInterface $io)
+    {
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function uninstall(Composer $composer, IOInterface $io)
+    {
+    }
+
     public function preInstall(Event $event)
     {
         // Not triggered when this plugin is installing. Solves the method addPackage.

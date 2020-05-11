@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- support for Composer 2.0
+
 ## 1.2.2 - 2020-04-06
 
 - fixed removing invalid symlinks
