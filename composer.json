@@ -44,15 +44,6 @@
             "Liborm85\\ComposerVendorCleaner\\Tests\\": "tests/"
         }
     },
-    "archive": {
-        "exclude": [
-            ".editorconfig",
-            ".gitignore",
-            ".travis.yml",
-            "phpunit.xml",
-            "tests"
-        ]
-    },
     "extra": {
         "class": "Liborm85\\ComposerVendorCleaner\\Plugin"
     }
