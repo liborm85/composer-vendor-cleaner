@@ -3,10 +3,6 @@
 namespace Liborm85\ComposerVendorCleaner;
 
 use Composer\IO\IOInterface;
-use Composer\Util\Filesystem;
-use Composer\Util\Platform;
-use FilesystemIterator;
-use RecursiveDirectoryIterator;
 
 class Cleaner
 {
@@ -156,7 +152,7 @@ class Cleaner
 
         foreach ($directories as $directory) {
             $filepath = $path . $directory;
-            if (!$this->isEmptyDirectory($filepath)) {
+            if (!$this->filesystem->isEmptyDirectory($filepath)) {
                 continue;
             }
 
@@ -171,7 +167,7 @@ class Cleaner
             $this->removedEmptyDirectories++;
         }
 
-        if ($this->isEmptyDirectory($path)) {
+        if ($this->filesystem->isEmptyDirectory($path)) {
             $this->filesystem->removeDirectory($path);
 
             $directory = basename($path);
@@ -195,7 +191,7 @@ class Cleaner
         foreach ($filesToRemove as $fileToRemove) {
             $filepath = $rootDir . $fileToRemove;
             if (is_dir($filepath)) {
-                if (!$this->isEmptyDirectory($filepath)) {
+                if (!$this->filesystem->isEmptyDirectory($filepath)) {
                     $this->io->write(
                         "Composer vendor cleaner: Directory '<info>{$fileToRemove}</info>' from package <info>{$packageName}</info> not removed, because isn't empty",
                         true,
@@ -213,12 +209,7 @@ class Cleaner
                 );
                 $this->removedDirectories++;
             } else {
-                // fix for wrong writeable permission after clone from git on Windows
-                if (Platform::isWindows() && !is_writable($filepath)) {
-                    @chmod($filepath, 0666);
-                }
-
-                $this->filesystem->unlink($filepath);
+                $this->filesystem->removeFile($filepath);
 
                 $this->removedFiles++;
                 $this->io->write(
@@ -242,14 +233,4 @@ class Cleaner
         return $directory->getEntries();
     }
 
-    /**
-     * @param string $directory
-     * @return bool
-     */
-    private function isEmptyDirectory($directory)
-    {
-        $iterator = new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS);
-
-        return iterator_count($iterator) === 0;
-    }
 }

@@ -12,7 +12,6 @@ use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
-use Composer\Util\Filesystem;
 
 class Plugin implements PluginInterface, EventSubscriberInterface
 {
