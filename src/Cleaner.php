@@ -213,7 +213,8 @@ class Cleaner
                 );
                 $this->removedDirectories++;
             } else {
-                if (Platform::isWindows() && !is_writable($filepath)) { // fix for wrong writeable permission after clone from git on Windows
+                // fix for wrong writeable permission after clone from git on Windows
+                if (Platform::isWindows() && !is_writable($filepath)) {
                     @chmod($filepath, 0666);
                 }
 

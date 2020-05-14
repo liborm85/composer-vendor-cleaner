@@ -40,7 +40,7 @@ class DevFilesFinder
                 $globFilter->addInclude('*', $this->matchCase);
                 $globFilter->addInclude('*/*', $this->matchCase);
             } elseif (strpos($packageGlobPattern, '/') === false) {
-                $globFilter->addInclude($packageGlobPattern , $this->matchCase);
+                $globFilter->addInclude($packageGlobPattern, $this->matchCase);
                 $globFilter->addInclude($packageGlobPattern . '/*', $this->matchCase);
             } else {
                 $globFilter->addInclude($packageGlobPattern, $this->matchCase);
