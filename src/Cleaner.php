@@ -4,6 +4,7 @@ namespace Liborm85\ComposerVendorCleaner;
 
 use Composer\IO\IOInterface;
 use Composer\Util\Filesystem;
+use Composer\Util\Platform;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 
