@@ -1,7 +1,5 @@
 # Changelog
 
-## Unreleased
-
 ## 1.3.1 - 2020-05-15
 
 - fixed removing files on Windows
