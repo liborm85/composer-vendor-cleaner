@@ -65,7 +65,11 @@ class DevFilesFinder
 
         $globFilter = new GlobFilter();
         foreach ($globPatterns as $globPattern) {
-            $globFilter->addInclude($globPattern, $this->matchCase);
+            if (substr($globPattern, 0, 1) === '!') {
+                $globFilter->addExclude(substr($globPattern, 1), $this->matchCase);
+            } else {
+                $globFilter->addInclude($globPattern, $this->matchCase);
+            }
         }
 
         return $globFilter->getFilteredEntries($entries, GlobFilter::ORDER_DESCENDING);
@@ -81,6 +85,12 @@ class DevFilesFinder
         foreach ($patterns as $pattern) {
             $filePatternPrefix = '';
             $filePatternSuffix = '';
+            $isExcludePattern = false;
+            if (substr($pattern, 0, 1) === '!') {
+                $isExcludePattern = true;
+                $pattern = substr($pattern, 1);
+            }
+
             if (substr($pattern, 0, 1) !== '/') {
                 $filePatternPrefix = '/**/';
             }
@@ -90,6 +100,10 @@ class DevFilesFinder
             }
 
             $globPattern = '/' . ltrim($filePatternPrefix . $pattern . $filePatternSuffix, '/');
+
+            if ($isExcludePattern) {
+                $globPattern = '!' . $globPattern;
+            }
 
             $globPatterns[] = $globPattern;
         }

@@ -75,7 +75,7 @@ class DevFilesFinderTest extends TestCase
         );
     }
 
-    public function testGetFilteredEntries()
+    public function testGetFilteredEntries1()
     {
         $patterns = [
             '/tests/**',
@@ -91,6 +91,25 @@ class DevFilesFinderTest extends TestCase
                 '/tests/Test.docx',
                 '/tests/TEST.PHP',
                 '/tests/TEST.DOCX',
+            ],
+            $devFilesFinder->getFilteredEntries($this->simpleEntriesArray, $patterns)
+        );
+    }
+
+    public function testGetFilteredEntries2()
+    {
+        $patterns = [
+            '/tests/**',
+            '!/tests/*.docx',
+        ];
+
+        $devFiles = [];
+        $devFilesFinder = new DevFilesFinder($devFiles, false);
+        self::assertEquals(
+            [
+                '/tests/test.php',
+                '/tests/Test.php',
+                '/tests/TEST.PHP',
             ],
             $devFilesFinder->getFilteredEntries($this->simpleEntriesArray, $patterns)
         );

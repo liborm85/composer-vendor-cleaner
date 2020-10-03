@@ -44,6 +44,10 @@ Example:
         ],
         "other/package": [
             "/src/**/*.md"      // means: find whatever all md files in src directory, eg.: /src/dir1/test.md, /src/dir1/dir2/readme.md
+        ],
+        "example/package": [    // means: remove all files and directories in language directory without cs.php file
+            "languages/*",
+            "!languages/cs.php" // means: exclude cs.php file from remove
         ]
     }
 }
