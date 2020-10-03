@@ -36,7 +36,7 @@ Example:
             "*.bat"
         ],
         "twig/twig": [          // means: find only in twig/twig package directory
-            "doc/"
+            "doc/",
             "/drupal_test.sh"   // means: only file in root directory of twig/twig package
         ],
         "symfony/*": [          // means: find in all symfony packages
