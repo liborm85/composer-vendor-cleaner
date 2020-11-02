@@ -14,6 +14,10 @@ Global installation:
 composer global require liborm85/composer-vendor-cleaner
 ```
 
+## Requirements
+
+- PHP 5.3.2+
+
 ## Configuration
 
 Development files and directories to remove can be defined in `composer.json` file
