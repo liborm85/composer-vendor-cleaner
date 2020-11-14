@@ -16,7 +16,7 @@ composer global require liborm85/composer-vendor-cleaner
 
 ## Requirements
 
-- PHP 5.3.2+
+- PHP 5.6.0+
 
 ## Configuration
 
