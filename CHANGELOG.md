@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.4.0 - 2020-11-15
 
 - new glob exclude pattern `!`
 - fixed cleaning in removed packages by other composer plugin (e.g. in Drupal)
