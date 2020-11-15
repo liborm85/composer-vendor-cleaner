@@ -145,6 +145,10 @@ class Cleaner
      */
     private function removeEmptyDirectories($packageName, $path)
     {
+        if ($path === '') {
+            return;
+        }
+
         $directory = new Directory();
         $directory->addPath($path);
         $directories = $directory->getDirectories();
@@ -227,6 +231,10 @@ class Cleaner
      */
     private function getDirectoryEntries($path)
     {
+        if ($path === '') {
+            return [];
+        }
+
         $directory = new Directory();
         $directory->addPath($path);
 

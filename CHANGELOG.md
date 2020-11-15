@@ -3,6 +3,7 @@
 ## Unreleased
 
 - new glob exclude pattern `!`
+- fixed cleaning in removed packages by other composer plugin (e.g. in Drupal)
 
 ## 1.3.1 - 2020-05-15
 
