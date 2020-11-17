@@ -35,6 +35,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     /**
      * @var bool
      */
+    private $noDevOnly;
+
+    /**
+     * @var bool
+     */
     private $isCleanedPackages = false;
 
     /**
@@ -90,6 +95,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
             $pluginConfig = $this->composer->getConfig()->get(self::DEV_FILES_KEY);
             $matchCase = isset($pluginConfig['match-case']) ? (bool)$pluginConfig['match-case'] : true;
             $removeEmptyDirs = isset($pluginConfig['remove-empty-dirs']) ? (bool)$pluginConfig['remove-empty-dirs'] : true;
+            $this->noDevOnly = isset($pluginConfig['no-dev-only']) ? (bool)$pluginConfig['no-dev-only'] : false;
 
             $this->cleaner = new Cleaner($io, new Filesystem(), $devFiles, $matchCase, $removeEmptyDirs);
         }
@@ -111,6 +117,10 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
     public function preInstall(Event $event)
     {
+        if ($event->isDevMode() && $this->noDevOnly) {
+            return;
+        }
+
         // Not triggered when this plugin is installing. Solves the method addPackage.
 
         $this->actionIsDumpAutoload = false;
@@ -118,6 +128,10 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
     public function addPackage(PackageEvent $event)
     {
+        if ($event->isDevMode() && $this->noDevOnly) {
+            return;
+        }
+
         // If this plugin is installing here is set install/update mode (solves not triggered the method preInstall).
         if ($this->actionIsDumpAutoload) {
             $this->actionIsDumpAutoload = false;
@@ -140,6 +154,10 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     public function cleanup(Event $event)
     {
         if (!$this->cleaner) { // cleaner not enabled/configured in project
+            return;
+        }
+
+        if ($event->isDevMode() && $this->noDevOnly) {
             return;
         }
 

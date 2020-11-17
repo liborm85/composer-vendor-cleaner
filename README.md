@@ -59,8 +59,9 @@ Example:
 
 For additional configuration can be used [`config`](https://getcomposer.org/doc/04-schema.md#config) attribute.
 
-- `match-case` _(default: true)_ - Match case of name files and directories.
-- `remove-empty-dirs` _(default: true)_ - Removes empty directories.
+- `match-case` _(default: `true`)_ - Match case of name files and directories.
+- `remove-empty-dirs` _(default: `true`)_ - Removes empty directories.
+- `no-dev-only` _(default: `false`)_ - If is set `true` start the cleanup only if the composer command is run with `--no-dev`.
 
 Example:
 ```

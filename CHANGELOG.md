@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- new `no-dev-only` setting for disable cleanup in dev mode (default: `false`)
+
 ## 1.4.0 - 2020-11-15
 
 - new glob exclude pattern `!`
