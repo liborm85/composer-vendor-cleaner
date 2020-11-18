@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.5.0 - 2020-11-18
 
 - new `no-dev-only` setting for disable cleanup in dev mode (default: `false`)
 
