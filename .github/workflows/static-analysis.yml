@@ -27,6 +27,6 @@ jobs:
         run: composer install --prefer-dist --no-progress --no-suggest
 
       - name: Run PHPStan
-        run:
-          - php vendor/bin/phpstan.phar --version
-          - php vendor/bin/phpstan.phar analyse -c phpstan.neon
+        run: |
+          php vendor/bin/phpstan.phar --version
+          php vendor/bin/phpstan.phar analyse -c phpstan.neon
