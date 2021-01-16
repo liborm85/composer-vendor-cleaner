@@ -1,0 +1,10 @@
+parameters:
+  level: 2
+  paths:
+    - src/
+    - tests/
+
+  excludePaths:
+    analyse:
+      - vendor/
+
