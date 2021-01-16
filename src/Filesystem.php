@@ -18,7 +18,7 @@ class Filesystem
     }
 
     /**
-     * @param $directory
+     * @param string $directory
      * @return bool
      */
     public function removeDirectory($directory)
@@ -27,7 +27,7 @@ class Filesystem
     }
 
     /**
-     * @param $file
+     * @param string $file
      * @return bool
      */
     public function removeFile($file)

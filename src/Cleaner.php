@@ -226,7 +226,7 @@ class Cleaner
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @return array
      */
     private function getDirectoryEntries($path)

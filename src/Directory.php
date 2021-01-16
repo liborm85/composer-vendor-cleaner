@@ -29,7 +29,7 @@ class Directory
         $entries = [];
         foreach ($this->paths as $path) {
             $directory = new RecursiveDirectoryIterator($path, FilesystemIterator::UNIX_PATHS);
-            /** @var $iterator RecursiveDirectoryIterator */
+            /** @var RecursiveDirectoryIterator $iterator */
             $iterator = new RecursiveIteratorIterator($directory);
 
             foreach ($iterator as $file) {
@@ -55,7 +55,7 @@ class Directory
         $entries = [];
         foreach ($this->paths as $path) {
             $directory = new RecursiveDirectoryIterator($path, FilesystemIterator::UNIX_PATHS);
-            /** @var $iterator RecursiveDirectoryIterator */
+            /** @var RecursiveDirectoryIterator $iterator */
             $iterator = new RecursiveIteratorIterator($directory);
 
             foreach ($iterator as $file) {
