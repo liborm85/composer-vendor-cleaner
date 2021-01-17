@@ -65,7 +65,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     }
 
     /**
-     * @return string[]
+     * @return string[]|array[]
      */
     public static function getSubscribedEvents()
     {
