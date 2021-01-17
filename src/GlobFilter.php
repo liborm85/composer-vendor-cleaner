@@ -11,12 +11,12 @@ class GlobFilter
     const ORDER_DESCENDING = 'desc';
 
     /**
-     * @var array
+     * @var string[]
      */
     private $includeRegex = [];
 
     /**
-     * @var array
+     * @var string[]
      */
     private $excludeRegex = [];
 
@@ -45,9 +45,9 @@ class GlobFilter
     }
 
     /**
-     * @param array $entries
+     * @param string[] $entries
      * @param string $order
-     * @return array
+     * @return string[]
      */
     public function getFilteredEntries($entries, $order = self::ORDER_NONE)
     {
@@ -77,9 +77,9 @@ class GlobFilter
     }
 
     /**
-     * @param array $regexPatterns
-     * @param array $entries
-     * @return array
+     * @param string[] $regexPatterns
+     * @param string[] $entries
+     * @return string[]
      */
     private function filterEntries($regexPatterns, $entries)
     {
@@ -107,7 +107,7 @@ class GlobFilter
     }
 
     /**
-     * @param array $array
+     * @param string[] $array
      * @param string $order
      */
     private function sort(&$array, $order)

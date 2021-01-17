@@ -43,7 +43,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     private $isCleanedPackages = false;
 
     /**
-     * @var array
+     * @var string[]
      */
     private $changedPackages = [];
 
@@ -65,7 +65,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * @return string[]
      */
     public static function getSubscribedEvents()
     {

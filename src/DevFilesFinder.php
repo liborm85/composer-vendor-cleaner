@@ -5,7 +5,7 @@ namespace Liborm85\ComposerVendorCleaner;
 class DevFilesFinder
 {
     /**
-     * @var array
+     * @var string[][]
      */
     private $devFiles;
 
@@ -15,7 +15,7 @@ class DevFilesFinder
     private $matchCase;
 
     /**
-     * @param array $devFiles
+     * @param string[][] $devFiles
      * @param bool $matchCase
      */
     public function __construct($devFiles, $matchCase)
@@ -26,7 +26,7 @@ class DevFilesFinder
 
     /**
      * @param string $packageName
-     * @return array
+     * @return string[]
      */
     public function getGlobPatternsForPackage($packageName)
     {
@@ -55,9 +55,9 @@ class DevFilesFinder
     }
 
     /**
-     * @param array $entries
-     * @param array $globPatterns
-     * @return array
+     * @param string[] $entries
+     * @param string[] $globPatterns
+     * @return string[]
      */
     public function getFilteredEntries($entries, $globPatterns)
     {
@@ -76,8 +76,8 @@ class DevFilesFinder
     }
 
     /**
-     * @param array $patterns
-     * @return array
+     * @param string[] $patterns
+     * @return string[]
      */
     private function buildGlobPatternForFilter($patterns)
     {

@@ -9,7 +9,7 @@ use RecursiveIteratorIterator;
 class Directory
 {
     /**
-     * @var array;
+     * @var string[];
      */
     private $paths = [];
 
@@ -22,7 +22,7 @@ class Directory
     }
 
     /**
-     * @return array
+     * @return string[]
      */
     public function getEntries()
     {
@@ -48,7 +48,7 @@ class Directory
     }
 
     /**
-     * @return array
+     * @return string[]
      */
     public function getDirectories()
     {

@@ -32,7 +32,7 @@ class PluginTest extends TestCase
 
     /**
      * @param string $classname
-     * @return array
+     * @return string[]
      * @throws \ReflectionException
      */
     private function getClassConstants($classname)

@@ -23,7 +23,7 @@ class Cleaner
     private $matchCase;
 
     /**
-     * @var array
+     * @var string[][]
      */
     private $devFiles;
 
@@ -55,7 +55,7 @@ class Cleaner
     /**
      * @param IOInterface $io
      * @param Filesystem $filesystem
-     * @param array $devFiles
+     * @param string[][] $devFiles
      * @param bool $matchCase
      * @param bool $removeEmptyDirs
      */
@@ -188,7 +188,7 @@ class Cleaner
     /**
      * @param string $packageName
      * @param string $rootDir
-     * @param array $filesToRemove
+     * @param string[] $filesToRemove
      */
     private function removeFiles($packageName, $rootDir, $filesToRemove)
     {
@@ -227,7 +227,7 @@ class Cleaner
 
     /**
      * @param string $path
-     * @return array
+     * @return string[]
      */
     private function getDirectoryEntries($path)
     {
