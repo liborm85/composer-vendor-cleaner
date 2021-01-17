@@ -8,3 +8,7 @@ parameters:
     analyse:
       - vendor/
 
+  reportUnmatchedIgnoredErrors: false
+  ignoreErrors:
+    # compatibility with multiple PHPUnit versions:
+    - '#Call to an undefined static method [a-zA-Z0-9\\_]+::assertInternalType().#'
