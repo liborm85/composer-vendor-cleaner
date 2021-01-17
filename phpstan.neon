@@ -1,5 +1,5 @@
 parameters:
-  level: 5
+  level: 6
   paths:
     - src/
     - tests/
@@ -11,4 +11,6 @@ parameters:
   reportUnmatchedIgnoredErrors: false
   ignoreErrors:
     # compatibility with multiple PHPUnit versions:
-    - '#Call to an undefined static method [a-zA-Z0-9\\_]+::assertInternalType().#'
+    - '#Call to an undefined static method [a-zA-Z0-9\\_]+::assertInternalType()#'
+    # skip void return type in unit tests
+    - '#Method Liborm85\\ComposerVendorCleaner\\Tests\\[a-zA-Z0-9\\_]+Test::test[a-zA-Z0-9\\_]+\(\) has no return typehint specified#'

@@ -10,6 +10,9 @@ use RecursiveDirectoryIterator;
 class Filesystem
 {
 
+    /**
+     * @var ComposerFilesystem
+     */
     private $filesystem;
 
     public function __construct()

@@ -81,7 +81,9 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * @param Composer $composer
+     * @param IOInterface $io
+     * @return void
      */
     public function activate(Composer $composer, IOInterface $io)
     {
@@ -102,19 +104,27 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * @param Composer $composer
+     * @param IOInterface $io
+     * @return void
      */
     public function deactivate(Composer $composer, IOInterface $io)
     {
     }
 
     /**
-     * @inheritDoc
+     * @param Composer $composer
+     * @param IOInterface $io
+     * @return void
      */
     public function uninstall(Composer $composer, IOInterface $io)
     {
     }
 
+    /**
+     * @param Event $event
+     * @return void
+     */
     public function preInstall(Event $event)
     {
         if ($event->isDevMode() && $this->noDevOnly) {
@@ -126,6 +136,10 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $this->actionIsDumpAutoload = false;
     }
 
+    /**
+     * @param PackageEvent $event
+     * @return void
+     */
     public function addPackage(PackageEvent $event)
     {
         if ($event->isDevMode() && $this->noDevOnly) {
@@ -151,6 +165,10 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         }
     }
 
+    /**
+     * @param Event $event
+     * @return void
+     */
     public function cleanup(Event $event)
     {
         if (!$this->cleaner instanceof Cleaner) { // cleaner not enabled/configured in project

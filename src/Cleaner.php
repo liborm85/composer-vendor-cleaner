@@ -70,6 +70,7 @@ class Cleaner
 
     /**
      * @param Package[] $packages
+     * @return void
      */
     public function cleanupPackages($packages)
     {
@@ -101,6 +102,7 @@ class Cleaner
 
     /**
      * @param string $binDir
+     * @return void
      */
     public function cleanupBinary($binDir)
     {
@@ -125,6 +127,9 @@ class Cleaner
         }
     }
 
+    /**
+     * @return void
+     */
     public function finishCleanup()
     {
         if ($this->removedEmptyDirectories) {
@@ -142,6 +147,7 @@ class Cleaner
     /**
      * @param string $packageName
      * @param string $path
+     * @return void
      */
     private function removeEmptyDirectories($packageName, $path)
     {
@@ -189,6 +195,7 @@ class Cleaner
      * @param string $packageName
      * @param string $rootDir
      * @param string[] $filesToRemove
+     * @return void
      */
     private function removeFiles($packageName, $rootDir, $filesToRemove)
     {

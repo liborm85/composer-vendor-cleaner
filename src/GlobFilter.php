@@ -23,6 +23,7 @@ class GlobFilter
     /**
      * @param string $globPattern
      * @param bool $matchCase
+     * @return void
      */
     public function addInclude($globPattern, $matchCase = true)
     {
@@ -32,12 +33,16 @@ class GlobFilter
     /**
      * @param string $globPattern
      * @param bool $matchCase
+     * @return void
      */
     public function addExclude($globPattern, $matchCase = true)
     {
         $this->excludeRegex[] = $this->globPatternToRegexPattern($globPattern, $matchCase);
     }
 
+    /**
+     * @return void
+     */
     public function clear()
     {
         $this->includeRegex = [];
@@ -109,6 +114,7 @@ class GlobFilter
     /**
      * @param string[] $array
      * @param string $order
+     * @return void
      */
     private function sort(&$array, $order)
     {
