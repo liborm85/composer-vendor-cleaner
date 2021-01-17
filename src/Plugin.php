@@ -59,7 +59,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
     public function __destruct()
     {
-        if ($this->cleaner && $this->isCleanedPackages && !$this->isCleaningFinished) {
+        if (($this->cleaner instanceof Cleaner) && $this->isCleanedPackages && !$this->isCleaningFinished) {
             $this->cleaner->finishCleanup();
         }
     }
@@ -153,7 +153,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
     public function cleanup(Event $event)
     {
-        if (!$this->cleaner) { // cleaner not enabled/configured in project
+        if (!$this->cleaner instanceof Cleaner) { // cleaner not enabled/configured in project
             return;
         }
 
