@@ -37,6 +37,10 @@ class PluginTest extends TestCase
      */
     private function getClassConstants($classname)
     {
+        if (!class_exists($classname)) {
+            throw new \ReflectionException('Class not found');
+        }
+
         $reflection = new \ReflectionClass($classname);
 
         return $reflection->getConstants();
