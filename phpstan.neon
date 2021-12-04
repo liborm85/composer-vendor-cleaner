@@ -13,4 +13,4 @@ parameters:
     # compatibility with multiple PHPUnit versions:
     - '#Call to an undefined static method [a-zA-Z0-9\\_]+::assertInternalType()#'
     # skip void return type in unit tests
-    - '#Method Liborm85\\ComposerVendorCleaner\\Tests\\[a-zA-Z0-9\\_]+Test::test[a-zA-Z0-9\\_]+\(\) has no return typehint specified#'
+    - '#Method Liborm85\\ComposerVendorCleaner\\Tests\\[a-zA-Z0-9\\_]+Test::test[a-zA-Z0-9\\_]+\(\) has no return type specified#'
