@@ -3,7 +3,8 @@ name: Static analysis
 on: [ push, pull_request ]
 
 jobs:
-  build:
+  phpstan:
+    name: "Static analysis"
 
     runs-on: ubuntu-latest
 

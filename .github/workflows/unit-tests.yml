@@ -3,7 +3,8 @@ name: Unit tests
 on: [ push, pull_request ]
 
 jobs:
-  build:
+  phpunit:
+    name: "Unit tests"
 
     runs-on: ubuntu-latest
 
