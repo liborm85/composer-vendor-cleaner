@@ -9,6 +9,8 @@ use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Installer\PackageEvent;
 use Composer\Installer\PackageEvents;
 use Composer\IO\IOInterface;
+use Composer\Plugin\CommandEvent;
+use Composer\Plugin\PluginEvents;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
@@ -55,6 +57,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     /**
      * @var bool
      */
+    private $actionIsInstall = false;
+
+    /**
+     * @var bool
+     */
     private $isCleaningFinished = false;
 
     public function __destruct()
@@ -70,6 +77,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
+            PluginEvents::COMMAND => 'command',
             ScriptEvents::PRE_AUTOLOAD_DUMP => 'cleanup',
             ScriptEvents::PRE_UPDATE_CMD => 'preInstall',
             ScriptEvents::PRE_INSTALL_CMD => 'preInstall',
@@ -119,6 +127,17 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      */
     public function uninstall(Composer $composer, IOInterface $io)
     {
+    }
+
+    /**
+     * @param CommandEvent $event
+     * @return void
+     */
+    public function command(CommandEvent $event)
+    {
+        if ($event->getCommandName() === 'install') {
+            $this->actionIsInstall = true;
+        }
     }
 
     /**
@@ -179,6 +198,10 @@ class Plugin implements PluginInterface, EventSubscriberInterface
             return;
         }
 
+        if ($this->isCleanInstallAction()) {
+            $this->cleaner->enableAnalyseDevFiles();
+        }
+
         if (!$this->isCleanedPackages) {
             $this->cleaner->cleanupPackages($this->getPackages());
         }
@@ -191,6 +214,24 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         }
 
         $this->isCleanedPackages = true;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isCleanInstallAction()
+    {
+        if (!$this->actionIsInstall) {
+            return false;
+        }
+
+        foreach ($this->getPackages() as $package) {
+            if (!$package->isPackageChanged()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

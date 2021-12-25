@@ -53,6 +53,16 @@ class Cleaner
     private $removedEmptyDirectories = 0;
 
     /**
+     * @var bool
+     */
+    private $analyseDevFiles = false;
+
+    /**
+     * @var string[][]
+     */
+    private $notUsedDevFiles;
+
+    /**
      * @param IOInterface $io
      * @param Filesystem $filesystem
      * @param string[][] $devFiles
@@ -66,6 +76,15 @@ class Cleaner
         $this->devFiles = $devFiles;
         $this->matchCase = $matchCase;
         $this->removeEmptyDirs = $removeEmptyDirs;
+        $this->notUsedDevFiles = $this->devFiles;
+    }
+
+    /**
+     * @return void
+     */
+    public function enableAnalyseDevFiles()
+    {
+        $this->analyseDevFiles = true;
     }
 
     /**
@@ -89,6 +108,8 @@ class Cleaner
 
             $allFiles = $this->getDirectoryEntries($package->getInstallPath());
             $filesToRemove = $devFilesFinder->getFilteredEntries($allFiles, $devFilesPatternsForPackage);
+
+            $this->processNotUsedDevFiles($package->getPrettyName(), $allFiles, $filesToRemove);
 
             $this->removeFiles($package->getPrettyName(), $package->getInstallPath(), $filesToRemove);
         }
@@ -119,6 +140,8 @@ class Cleaner
             $allFiles = $this->getDirectoryEntries($binDir);
             $filesToRemove = $devFilesFinder->getFilteredEntries($allFiles, $devFilesPatternsForBin);
 
+            $this->processNotUsedDevFiles('bin', $allFiles, $filesToRemove);
+
             $this->removeFiles('bin', $binDir, $filesToRemove);
         }
 
@@ -128,10 +151,63 @@ class Cleaner
     }
 
     /**
+     * @param string $packageName
+     * @param string[] $allFiles
+     * @param string[] $filesToRemove
+     * @return void
+     */
+    private function processNotUsedDevFiles($packageName, $allFiles, $filesToRemove)
+    {
+        if (!$this->analyseDevFiles) {
+            return;
+        }
+
+        $devFilesFinder = new DevFilesFinder($this->devFiles, $this->matchCase);
+        foreach ($this->notUsedDevFiles as $packageGlob => &$devFile) {
+            if ($devFilesFinder->isGlobPatternForPackage($packageName, $packageGlob)) {
+                foreach ($devFile as $key => $item) {
+                    if (substr($item, 0, 1) === '!') {
+                        if (!empty($devFilesFinder->getFilteredEntries($allFiles, [substr($item, 1)]))) {
+                            unset($devFile[$key]);
+                        }
+                    } else {
+                        if (!empty($devFilesFinder->getFilteredEntries($filesToRemove, [$item]))) {
+                            unset($devFile[$key]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * @return void
      */
     public function finishCleanup()
     {
+        if ($this->analyseDevFiles) {
+            $filteredNotUsedDevFiles = $this->getFilteredNotUsedDevFiles();
+            if (!empty($filteredNotUsedDevFiles)) {
+
+                $this->io->write("");
+                $this->io->write(
+                    "Composer vendor cleaner: <warning>Found {$this->getNotUsedDevFilesCount()} unused cleanup patterns.</warning>"
+                );
+                $this->io->write("");
+                $this->io->write(
+                    "Composer vendor cleaner: <warning>List of unused cleanup patterns:</warning>"
+                );
+                foreach ($filteredNotUsedDevFiles as $packageGlob => $devFile) {
+                    foreach ($devFile as $item) {
+                        $this->io->write(
+                            "Composer vendor cleaner: <warning> - '$packageGlob' -> '$item'</warning>"
+                        );
+                    }
+                }
+                $this->io->write("");
+            }
+        }
+
         if ($this->removedEmptyDirectories) {
             $this->io->write(
                 "Composer vendor cleaner: <info>Removed {$this->removedFiles} files and {$this->removedDirectories} (of which {$this->removedEmptyDirectories} are empty) directories from {$this->packagesCount} packages</info>"
@@ -142,6 +218,36 @@ class Cleaner
             );
         }
         $this->io->write("");
+    }
+
+    /**
+     * @return string[][]
+     */
+    private function getFilteredNotUsedDevFiles()
+    {
+        $filteredNotUsedDevFiles = [];
+        foreach ($this->notUsedDevFiles as $packageGlob => $devFile) {
+            if (empty($devFile)) {
+                continue;
+            }
+
+            $filteredNotUsedDevFiles[$packageGlob] = $devFile;
+        }
+
+        return $filteredNotUsedDevFiles;
+    }
+
+    /**
+     * @return int
+     */
+    private function getNotUsedDevFilesCount()
+    {
+        $count = 0;
+        foreach ($this->getFilteredNotUsedDevFiles() as $packageGlob => $devFile) {
+            $count += count($devFile);
+        }
+
+        return $count;
     }
 
     /**

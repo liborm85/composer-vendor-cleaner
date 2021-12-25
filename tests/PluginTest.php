@@ -12,6 +12,7 @@ class PluginTest extends TestCase
         $plugin = $this->getPlugin();
         $constants = $this->getClassConstants('Composer\Script\ScriptEvents');
         $constants += $this->getClassConstants('Composer\Installer\PackageEvents');
+        $constants += $this->getClassConstants('Composer\Plugin\PluginEvents');
         foreach ($plugin::getSubscribedEvents() as $event => $method) {
             self::assertContains($event, $constants);
             if (method_exists('\PHPUnit\Framework\TestCase', 'assertIsCallable')) {

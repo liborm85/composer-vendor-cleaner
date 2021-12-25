@@ -31,27 +31,35 @@ class DevFilesFinder
     public function getGlobPatternsForPackage($packageName)
     {
         $globPatterns = [];
-
-        $globFilter = new GlobFilter();
         foreach ($this->devFiles as $packageGlob => $devFile) {
-            $globFilter->clear();
-            $packageGlobPattern = rtrim($packageGlob, '/');
-            if ($packageGlobPattern === '') {
-                $globFilter->addInclude('*', $this->matchCase);
-                $globFilter->addInclude('*/*', $this->matchCase);
-            } elseif (strpos($packageGlobPattern, '/') === false) {
-                $globFilter->addInclude($packageGlobPattern, $this->matchCase);
-                $globFilter->addInclude($packageGlobPattern . '/*', $this->matchCase);
-            } else {
-                $globFilter->addInclude($packageGlobPattern, $this->matchCase);
-            }
-
-            if (!empty($globFilter->getFilteredEntries([$packageName]))) {
+            if ($this->isGlobPatternForPackage($packageName, $packageGlob)) {
                 $globPatterns = array_merge($globPatterns, $devFile);
             }
         }
 
         return $globPatterns;
+    }
+
+    /**
+     * @param string $packageName
+     * @param string $packageGlob
+     * @return bool
+     */
+    public function isGlobPatternForPackage($packageName, $packageGlob)
+    {
+        $globFilter = new GlobFilter();
+        $packageGlobPattern = rtrim($packageGlob, '/');
+        if ($packageGlobPattern === '') {
+            $globFilter->addInclude('*', $this->matchCase);
+            $globFilter->addInclude('*/*', $this->matchCase);
+        } elseif (strpos($packageGlobPattern, '/') === false) {
+            $globFilter->addInclude($packageGlobPattern, $this->matchCase);
+            $globFilter->addInclude($packageGlobPattern . '/*', $this->matchCase);
+        } else {
+            $globFilter->addInclude($packageGlobPattern, $this->matchCase);
+        }
+
+        return !empty($globFilter->getFilteredEntries([$packageName]));
     }
 
     /**
