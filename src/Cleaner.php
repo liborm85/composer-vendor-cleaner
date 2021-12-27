@@ -169,10 +169,16 @@ class Cleaner
                     if (substr($item, 0, 1) === '!') {
                         if (!empty($devFilesFinder->getFilteredEntries($allFiles, [substr($item, 1)]))) {
                             unset($devFile[$key]);
+                            if (empty($devFile)) {
+                                unset($this->notUsedDevFiles[$packageGlob]);
+                            }
                         }
                     } else {
                         if (!empty($devFilesFinder->getFilteredEntries($filesToRemove, [$item]))) {
                             unset($devFile[$key]);
+                            if (empty($devFile)) {
+                                unset($this->notUsedDevFiles[$packageGlob]);
+                            }
                         }
                     }
                 }
@@ -185,27 +191,23 @@ class Cleaner
      */
     public function finishCleanup()
     {
-        if ($this->analyseDevFiles) {
-            $filteredNotUsedDevFiles = $this->getFilteredNotUsedDevFiles();
-            if (!empty($filteredNotUsedDevFiles)) {
-
-                $this->io->write("");
-                $this->io->write(
-                    "Composer vendor cleaner: <warning>Found {$this->getNotUsedDevFilesCount()} unused cleanup patterns.</warning>"
-                );
-                $this->io->write("");
-                $this->io->write(
-                    "Composer vendor cleaner: <warning>List of unused cleanup patterns:</warning>"
-                );
-                foreach ($filteredNotUsedDevFiles as $packageGlob => $devFile) {
-                    foreach ($devFile as $item) {
-                        $this->io->write(
-                            "Composer vendor cleaner: <warning> - '$packageGlob' -> '$item'</warning>"
-                        );
-                    }
+        if ($this->analyseDevFiles && !empty($this->notUsedDevFiles)) {
+            $this->io->write("");
+            $this->io->write(
+                "Composer vendor cleaner: <warning>Found {$this->getNotUsedDevFilesCount()} unused cleanup patterns.</warning>"
+            );
+            $this->io->write("");
+            $this->io->write(
+                "Composer vendor cleaner: <warning>List of unused cleanup patterns:</warning>"
+            );
+            foreach ($this->notUsedDevFiles as $packageGlob => $devFile) {
+                foreach ($devFile as $item) {
+                    $this->io->write(
+                        "Composer vendor cleaner: <warning> - '$packageGlob' -> '$item'</warning>"
+                    );
                 }
-                $this->io->write("");
             }
+            $this->io->write("");
         }
 
         if ($this->removedEmptyDirectories) {
@@ -221,29 +223,12 @@ class Cleaner
     }
 
     /**
-     * @return string[][]
-     */
-    private function getFilteredNotUsedDevFiles()
-    {
-        $filteredNotUsedDevFiles = [];
-        foreach ($this->notUsedDevFiles as $packageGlob => $devFile) {
-            if (empty($devFile)) {
-                continue;
-            }
-
-            $filteredNotUsedDevFiles[$packageGlob] = $devFile;
-        }
-
-        return $filteredNotUsedDevFiles;
-    }
-
-    /**
      * @return int
      */
     private function getNotUsedDevFilesCount()
     {
         $count = 0;
-        foreach ($this->getFilteredNotUsedDevFiles() as $packageGlob => $devFile) {
+        foreach ($this->notUsedDevFiles as $devFile) {
             $count += count($devFile);
         }
 
