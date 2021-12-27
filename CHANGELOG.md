@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- detection for unused patters
+- detection for unused patters (`dev-files`)
 
 ## 1.5.0 - 2020-11-18
 
