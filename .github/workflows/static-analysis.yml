@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           composer require phpstan/phpstan --dev --no-update
-          composer install --prefer-dist --no-progress --no-suggest
+          composer install --prefer-dist --no-progress
 
       - name: Run PHPStan
         run: |
