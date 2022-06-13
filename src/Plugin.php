@@ -100,6 +100,10 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $package = $this->composer->getPackage();
         $extra = $package->getExtra();
         $devFiles = isset($extra[self::DEV_FILES_KEY]) ? $extra[self::DEV_FILES_KEY] : null;
+        if (is_string($devFiles)) {
+            $external = json_decode(file_get_contents($devFiles), true, 3);
+            $devFiles = isset($external[self::DEV_FILES_KEY]) ? $external[self::DEV_FILES_KEY] : null;
+        }
         if ($devFiles) {
             $this->binDir = $this->composer->getConfig()->get('bin-dir');
             $pluginConfig = $this->composer->getConfig()->get(self::DEV_FILES_KEY);
