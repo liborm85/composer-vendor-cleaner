@@ -101,8 +101,22 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $extra = $package->getExtra();
         $devFiles = isset($extra[self::DEV_FILES_KEY]) ? $extra[self::DEV_FILES_KEY] : null;
         if (is_string($devFiles)) {
-            $external = json_decode(file_get_contents($devFiles), true, 3);
-            $devFiles = isset($external[self::DEV_FILES_KEY]) ? $external[self::DEV_FILES_KEY] : null;
+            $externalDevFiles = @file_get_contents($devFiles);
+            if ($externalDevFiles === false) {
+                $io->write("Composer vendor cleaner: <error>External JSON file not found.</error>");
+                return;
+            }
+
+            $devFiles = json_decode($externalDevFiles, true, 3);
+            if (json_last_error() !== 0) {
+                $io->write("Composer vendor cleaner: <error>External JSON file does not contain a valid JSON format.</error>");
+                return;
+            }
+
+            if (!is_array($devFiles)) {
+                $io->write("Composer vendor cleaner: <error>Invalid content in external JSON file.</error>");
+                return;
+            }
         }
         if ($devFiles) {
             $this->binDir = $this->composer->getConfig()->get('bin-dir');
