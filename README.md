@@ -57,6 +57,14 @@ Example:
 }
 ```
 
+Development files and directories can also be defined in an external json file, by specifying the relative path to
+this file in the `dev-files` key in the root composer.json.
+```
+"extra": {
+    "dev-files": "composer.dev-files.json"
+}
+```
+
 For additional configuration can be used [`config`](https://getcomposer.org/doc/04-schema.md#config) attribute.
 
 - `match-case` _(default: `true`)_ - Match case of name files and directories.

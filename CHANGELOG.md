@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `dev-files` settings support via external JSON file
+
 ## 1.6.0 - 2022-01-01
 
 - detection for unused patters (`dev-files`)
