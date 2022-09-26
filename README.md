@@ -58,10 +58,22 @@ Example:
 ```
 
 Development files and directories can also be defined in an external json file, by specifying the relative path to
-this file in the `dev-files` key in the root composer.json.
+this file in the `dev-files` key in the root composer.json. The format is the same as above.
 ```
 "extra": {
     "dev-files": "composer.dev-files.json"
+}
+```
+
+Example of `composer.dev-files.json` file:
+```
+{
+  "/": [
+    ".github/"
+  ],
+  "twig/twig": [
+    "doc/"
+  ]
 }
 ```
 
