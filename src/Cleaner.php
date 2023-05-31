@@ -242,7 +242,7 @@ class Cleaner
      */
     private function removeEmptyDirectories($packageName, $path)
     {
-        if ($path === '') {
+        if ($path === '' || $path === null) {
             return;
         }
 
