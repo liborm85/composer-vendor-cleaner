@@ -44,7 +44,7 @@ class Package
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getInstallPath()
     {
