@@ -237,7 +237,7 @@ class Cleaner
 
     /**
      * @param string $packageName
-     * @param string $path
+     * @param ?string $path
      * @return void
      */
     private function removeEmptyDirectories($packageName, $path)
@@ -284,14 +284,14 @@ class Cleaner
 
     /**
      * @param string $packageName
-     * @param string $rootDir
+     * @param ?string $rootDir
      * @param string[] $filesToRemove
      * @return void
      */
     private function removeFiles($packageName, $rootDir, $filesToRemove)
     {
         foreach ($filesToRemove as $fileToRemove) {
-            $filepath = $rootDir . $fileToRemove;
+            $filepath = (string)$rootDir . $fileToRemove;
             if (is_dir($filepath)) {
                 if (!$this->filesystem->isEmptyDirectory($filepath)) {
                     $this->io->write(
@@ -324,12 +324,12 @@ class Cleaner
     }
 
     /**
-     * @param string $path
+     * @param ?string $path
      * @return string[]
      */
     private function getDirectoryEntries($path)
     {
-        if ($path === '') {
+        if ($path === '' || $path === null) {
             return [];
         }
 
