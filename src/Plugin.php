@@ -4,6 +4,7 @@ namespace Liborm85\ComposerVendorCleaner;
 
 use Composer\Composer;
 use Composer\DependencyResolver\Operation\InstallOperation;
+use Composer\DependencyResolver\Operation\OperationInterface;
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Installer\PackageEvent;
@@ -188,7 +189,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
             $this->actionIsDumpAutoload = false;
         }
 
-        /** @var InstallOperation|UpdateOperation $operation */
+        /** @var InstallOperation|UpdateOperation|OperationInterface $operation */
         $operation = $event->getOperation();
 
         if ($operation instanceof InstallOperation) {
