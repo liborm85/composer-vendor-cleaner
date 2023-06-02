@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.7.1 - 2023-06-02
 
 - fixed behavior if package install path is null
 
