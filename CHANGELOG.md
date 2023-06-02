@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- fixed behavior if package install path is null
+
 ## 1.7.0 - 2022-07-29
 
 - `dev-files` settings support via external JSON file
