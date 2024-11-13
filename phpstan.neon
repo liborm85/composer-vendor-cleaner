@@ -10,7 +10,28 @@ parameters:
 
   reportUnmatchedIgnoredErrors: false
   ignoreErrors:
+    -
+      message: '#^PHPDoc tag @var with type RecursiveDirectoryIterator is not subtype of native type RecursiveIteratorIterator\<RecursiveDirectoryIterator\>\.$#'
+      identifier: varTag.nativeType
+      count: 2
+      path: src/Directory.php
+
+    -
+      message: '#^Instanceof between Liborm85\\ComposerVendorCleaner\\Cleaner and Liborm85\\ComposerVendorCleaner\\Cleaner will always evaluate to true\.$#'
+      identifier: instanceof.alwaysTrue
+      count: 2
+      path: src/Plugin.php
+
     # compatibility with multiple PHPUnit versions:
-    - '#Call to an undefined static method [a-zA-Z0-9\\_]+::assertInternalType()#'
-    # skip void return type in unit tests
-    - '#Method Liborm85\\ComposerVendorCleaner\\Tests\\[a-zA-Z0-9\\_]+Test::test[a-zA-Z0-9\\_]+\(\) has no return type specified#'
+    -
+      message: '#^Call to function method_exists\(\) with ''\\\\PHPUnit\\\\Framework…'' and ''assertIsCallable'' will always evaluate to true\.$#'
+      identifier: function.alreadyNarrowedType
+      count: 1
+      path: tests/PluginTest.php
+
+    # compatibility with multiple PHPUnit versions:
+    -
+      message: '#^Call to an undefined static method Liborm85\\ComposerVendorCleaner\\Tests\\PluginTest\:\:assertInternalType\(\)\.$#'
+      identifier: staticMethod.notFound
+      count: 1
+      path: tests/PluginTest.php

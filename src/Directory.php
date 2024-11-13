@@ -9,7 +9,7 @@ use RecursiveIteratorIterator;
 class Directory
 {
     /**
-     * @var string[];
+     * @var string[]
      */
     private $paths = [];
 

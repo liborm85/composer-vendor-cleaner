@@ -7,6 +7,9 @@ use Liborm85\ComposerVendorCleaner\Plugin;
 class PluginTest extends TestCase
 {
 
+    /**
+     * @return void
+     */
     public function testGetSubscribedEvents()
     {
         $plugin = $this->getPlugin();

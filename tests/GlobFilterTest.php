@@ -30,6 +30,9 @@ class GlobFilterTest extends TestCase
         'wtest.docx',
     ];
 
+    /**
+     * @return void
+     */
     public function testListOfFilesMatchCase()
     {
         $globFilter = new GlobFilter();
@@ -40,6 +43,9 @@ class GlobFilterTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testListOfFilesNoMatchCase()
     {
         $globFilter = new GlobFilter();
@@ -50,6 +56,9 @@ class GlobFilterTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testExcludeMatchCase()
     {
         $globFilter = new GlobFilter();
@@ -61,6 +70,9 @@ class GlobFilterTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testExcludeNoMatchCase()
     {
         $globFilter = new GlobFilter();
@@ -72,6 +84,9 @@ class GlobFilterTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testEmptyInclude()
     {
         $globFilter = new GlobFilter();
@@ -81,6 +96,9 @@ class GlobFilterTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testEmptyEntries()
     {
         $globFilter = new GlobFilter();
@@ -91,6 +109,9 @@ class GlobFilterTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testUnorderedArray()
     {
         $globFilter = new GlobFilter();
@@ -101,6 +122,9 @@ class GlobFilterTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testOrderedAscendingArray()
     {
         $globFilter = new GlobFilter();
@@ -111,6 +135,9 @@ class GlobFilterTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testOrderedDescendingArray()
     {
         $globFilter = new GlobFilter();

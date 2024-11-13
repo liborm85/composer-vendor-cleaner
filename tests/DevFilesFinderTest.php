@@ -21,6 +21,9 @@ class DevFilesFinderTest extends TestCase
         '/tests/TEST.DOCX',
     ];
 
+    /**
+     * @return void
+     */
     public function testGetGlobPatternsForPackage()
     {
         $devFiles = [
@@ -75,6 +78,9 @@ class DevFilesFinderTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testGetFilteredEntries1()
     {
         $patterns = [
@@ -96,6 +102,9 @@ class DevFilesFinderTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testGetFilteredEntries2()
     {
         $patterns = [
